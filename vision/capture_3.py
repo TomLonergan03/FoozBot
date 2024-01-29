@@ -4,58 +4,42 @@ import numpy as np
 def nothing(x):
     pass
 
-# Start capturing video
+# Create a window
+cv2.namedWindow('HSV Adjustments')
+cv2.createTrackbar('Lower H', 'HSV Adjustments', 0, 179, nothing)
+cv2.createTrackbar('Lower S', 'HSV Adjustments', 100, 255, nothing)
+cv2.createTrackbar('Lower V', 'HSV Adjustments', 100, 255, nothing)
+cv2.createTrackbar('Upper H', 'HSV Adjustments', 179, 179, nothing)
+cv2.createTrackbar('Upper S', 'HSV Adjustments', 255, 255, nothing)
+cv2.createTrackbar('Upper V', 'HSV Adjustments', 255, 255, nothing)
+
 vid = cv2.VideoCapture(0)
 
-cv2.namedWindow('Settings')
-cv2.createTrackbar('Lower Hue', 'Settings', 20, 179, nothing)
-cv2.createTrackbar('Upper Hue', 'Settings', 30, 179, nothing)
+while True:
+    _, frame = vid.read()
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-try:
-    while(True):
-        # Capture frame-by-frame
-        ret, frame = vid.read()
-        if not ret:
-            print("Failed to grab frame")
-            break
+    # Get slider positions
+    lh = cv2.getTrackbarPos('Lower H', 'HSV Adjustments')
+    ls = cv2.getTrackbarPos('Lower S', 'HSV Adjustments')
+    lv = cv2.getTrackbarPos('Lower V', 'HSV Adjustments')
+    uh = cv2.getTrackbarPos('Upper H', 'HSV Adjustments')
+    us = cv2.getTrackbarPos('Upper S', 'HSV Adjustments')
+    uv = cv2.getTrackbarPos('Upper V', 'HSV Adjustments')
 
-        # Convert the captured frame from BGR to HSV
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    # Define HSV range based on sliders
+    lower_hsv = np.array([lh, ls, lv])
+    upper_hsv = np.array([uh, us, uv])
 
-        # Get the current positions of the trackbars
-        lower_hue = cv2.getTrackbarPos('Lower Hue', 'Settings')
-        upper_hue = cv2.getTrackbarPos('Upper Hue', 'Settings')
+    mask = cv2.inRange(hsv, lower_hsv, upper_hsv)
+    result = cv2.bitwise_and(frame, frame, mask=mask)
 
-        lower_yellow = np.array([lower_hue, 100, 100])
-        upper_yellow = np.array([upper_hue, 255, 255])
+    cv2.imshow('frame', frame)
+    cv2.imshow('mask', mask)
+    cv2.imshow('result', result)
 
-        # Threshold the HSV image to get only yellow colors
-        mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
-        # Apply Gaussian Blur to reduce noise
-        mask = cv2.GaussianBlur(mask, (5, 5), 0)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-        # Find contours in the mask
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-        # Loop over the contours
-        for contour in contours:
-            area = cv2.contourArea(contour)
-            if area > 500:  # Filter based on area
-                # Approximate the contour
-                epsilon = 0.02 * cv2.arcLength(contour, True)
-                approx = cv2.approxPolyDP(contour, epsilon, True)
-                # Find the bounding box of the contour
-                x, y, w, h = cv2.boundingRect(approx)
-                # Draw the bounding box on the original frame
-                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-
-        # Display the original frame with bounding box
-        cv2.imshow('frame with bounding box', frame)
-
-        # Break the loop with the 'q' key
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-finally:
-    # When everything done, release the capture and destroy all windows
-    vid.release()
-    cv2.destroyAllWindows()
+vid.release()
+cv2.destroyAllWindows()

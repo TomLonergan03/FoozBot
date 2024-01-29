@@ -28,7 +28,7 @@ while(True):
     contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     # Loop over the contours
-    for contour in contours:
+    for contour in contours:   
         # Approximate the contour
         approx = cv2.approxPolyDP(contour, 0.02 * cv2.arcLength(contour, True), True)
         # Find the bounding box of the contour
