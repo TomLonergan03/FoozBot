@@ -1,4 +1,4 @@
-# This scripts does object detection on a live video feed from a webcam with the actual background
+# This scripts does object detection on a live video feed from a webcam with the actual background.
 
 import cv2
 import numpy as np
