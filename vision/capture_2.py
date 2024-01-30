@@ -18,7 +18,7 @@ while(True):
 
     # Define range of yellow color in HSV
     # Adjust these values to better suit the yellow color you're detecting
-    lower_yellow = np.array([20, 100, 100])  # Updated to more accurate yellow range
+    lower_yellow = np.array([0, 134, 199])  # Updated to more accurate yellow range
     upper_yellow = np.array([30, 255, 255])
 
     # Threshold the HSV image to get only yellow colors
