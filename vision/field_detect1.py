@@ -45,7 +45,7 @@ def find_foosball_table(frame):
     return frame
 
 # Capture video from the default camera (you can change the argument to use a different camera)
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 
 while True:
     # Read a frame from the video feed
