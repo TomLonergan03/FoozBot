@@ -36,7 +36,7 @@ def detect_and_draw_lines(frame):
     return frame
 
 # Capture video from the default camera (you can change the argument to use a different camera)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 while True:
     # Read a frame from the video feed
