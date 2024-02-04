@@ -6,7 +6,8 @@ import argparse
 import cv2
 import imutils
 import time
-import CannyEdge
+from PIL import Image
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video",
@@ -21,8 +22,20 @@ args = vars(ap.parse_args())
 greenLower = (0, 134, 199)
 greenUpper = (30, 255, 255)
 pts = deque(maxlen=args["buffer"])
-# if a video path was not supplied, grab the reference
-# to the webcam
+
+# Load the template for edge detection
+temp_edges = cv2.imread("/Users/arneshsaha/Desktop/FoozBot/vision/Images/TemplateCropped.jpg", cv2.IMREAD_GRAYSCALE)
+assert temp_edges is not None, "file could not be read, check with os.path.exists()"
+w, h = temp_edges.shape[::-1]
+
+def canny_edge(frame):
+    # Converting the frame to gray scale and applying Canny edge detection
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blurred, 130, 150)
+    return blurred, edges
+
+# if a video path was not supplied, grab the reference to the webcam
 if not args.get("video", False):
 	vs = VideoStream(src=0).start()
 # otherwise, grab a reference to the video file
@@ -41,65 +54,45 @@ while True:
 	# then we have reached the end of the video
 	if frame is None:
 		break
-	# resize the frame, blur it, and convert it to the HSV
-	# color space
-	frame = imutils.resize(frame, width=600)
-	blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-	# construct a mask for the color "green", then perform
-	# a series of dilations and erosions to remove any small
-	# blobs left in the mask
-	mask = cv2.inRange(hsv, greenLower, greenUpper)
+	# Apply Canny edge detection and template matching
+	blurred_frame, edges_frame = canny_edge(frame)
+	res = cv2.matchTemplate(edges_frame, temp_edges, cv2.TM_CCORR_NORMED)
+	min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+	top_left = max_loc # Using max_loc for CCoRR
+	bottom_right = (top_left[0] + w - 5, top_left[1] + h - 5)
+	cv2.rectangle(frame, top_left, bottom_right, (255, 0, 0), 2)
+
+	# Tracking green ball
+	mask = cv2.inRange(cv2.cvtColor(cv2.GaussianBlur(imutils.resize(frame, width=600), (11, 11), 0), cv2.COLOR_BGR2HSV), greenLower, greenUpper)
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
-
-	# find contours in the mask and initialize the current
-	# (x, y) center of the ball
-	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-		cv2.CHAIN_APPROX_SIMPLE)
-	cnts = imutils.grab_contours(cnts)
+	cnts = imutils.grab_contours(cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE))
 	center = None
-	# only proceed if at least one contour was found
 	if len(cnts) > 0:
-		# find the largest contour in the mask, then use
-		# it to compute the minimum enclosing circle and
-		# centroid
 		c = max(cnts, key=cv2.contourArea)
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-		print(center)
-		# only proceed if the radius meets a minimum size
 		if radius > 10:
-			# draw the circle and centroid on the frame,
-			# then update the list of tracked points
-			cv2.circle(frame, (int(x), int(y)), int(radius),
-				(0, 255, 255), 2)
+			cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
 			cv2.circle(frame, center, 5, (0, 0, 255), -1)
-	# update the points queue
 	pts.appendleft(center)
-
-	# loop over the set of tracked points
 	for i in range(1, len(pts)):
-		# if either of the tracked points are None, ignore
-		# them
 		if pts[i - 1] is None or pts[i] is None:
 			continue
-		# otherwise, compute the thickness of the line and
-		# draw the connecting lines
 		thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
-	# show the frame to our screen
+
+	# Show the frame and the edges
 	cv2.imshow("Frame", frame)
+	cv2.imshow('Canny Edge Detection', edges_frame)
 	key = cv2.waitKey(1) & 0xFF
-	# if the 'q' key is pressed, stop the loop
 	if key == ord("q"):
 		break
-# if we are not using a video file, stop the camera video stream
+
+# Cleanup
 if not args.get("video", False):
 	vs.stop()
-# otherwise, release the camera
 else:
 	vs.release()
-# close all windows
 cv2.destroyAllWindows()
