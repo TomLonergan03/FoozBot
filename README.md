@@ -24,4 +24,6 @@ We need some kind of way of storing the information:
 
 # Ball Path Finder
 I suggest that we make a common interface for the different classes which predict ball trajectories. This will make it easy to swap them and test out which one works best, without having to change the surrounding code. 
-
+Each ball trajectory prediction class should have the interface:
+- +updateBallPosition(newBallCoordinate : (float, float)) : void
+- +getExpectedPlayersIntersections() : (1stLineIntersection : float, 2ndLineIntersection : float)
