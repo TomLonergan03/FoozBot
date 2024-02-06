@@ -1,9 +1,12 @@
 #include <Stepper.h>
 
-const int stepsPerRevolution = 200;  // change this to fit the number of steps per revolution
+const int stepsPerRevolution = 220;  // change this to fit the number of steps per revolution
 String command;
 String previousCommand;
 int angle = 0;
+int x = 0;
+int move;
+int step;
 // for your motor
 
 // initialize the stepper library on pins 8 through 11:
@@ -45,12 +48,52 @@ void basePosition(){
   }
 }
 
+void moveTo(int position){
+  //11/22
+  //want the max rotation to be 110 steps
+  //so "position" is between 0 and 110
+  if (position > 110 || position < 0){
+    return;
+  }
+  if(position > x){
+    //move in the positive direction
+    step = position - x;
+    myStepper.step(-step);
+    x = position;
+  }
+  else if (position < x){
+    //move in the negative direction
+    step = x - position;
+    myStepper.step(step);
+    x = position;
+  }
+  else if (position == x){
+    Serial.println("same position, no move");
+    return;
+  }
+}
+
+void fullIn(){
+  moveTo(110);
+}
+
+void fullOut(){
+  moveTo(0);
+}
+
+void printInt(int num){
+  Serial.println(num);
+}
+
+
 
 
 // Main system loop
 void loop() {
   if (Serial.available()){
+    //to switch between lateral and player movement just comment and un-comment the two below lines alternately.
     command = Serial.readStringUntil('\n');
+    //move = Serial.parseInt();
     command.trim();
     basePosition();
 
@@ -69,7 +112,12 @@ void loop() {
     else if (command.equals("kick")){
         kick();
       }
+    else{
+      moveTo(move);
+
+    }
     previousCommand = command;
+
   
 }
 }
