@@ -6,7 +6,7 @@ import argparse
 import cv2
 import imutils
 import time
-import CannyEdge
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video",
@@ -20,6 +20,7 @@ args = vars(ap.parse_args())
 # list of tracked points
 greenLower = (0, 134, 199)
 greenUpper = (30, 255, 255)
+# pts = deque(maxlen=args["buffer"])
 pts = deque(maxlen=args["buffer"])
 # if a video path was not supplied, grab the reference
 # to the webcam
