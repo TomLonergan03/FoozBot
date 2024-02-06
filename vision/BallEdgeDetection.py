@@ -24,7 +24,7 @@ greenUpper = (30, 255, 255)
 pts = deque(maxlen=args["buffer"])
 
 # Load the template for edge detection
-temp_edges = cv2.imread("/Users/arneshsaha/Desktop/FoozBot/vision/Images/TemplateCropped.jpg", cv2.IMREAD_GRAYSCALE)
+temp_edges = cv2.imread("/Users/arneshsaha/Desktop/FoozBot/vision/Images/TemplateNewCropped360x240.jpg", cv2.IMREAD_GRAYSCALE)
 assert temp_edges is not None, "file could not be read, check with os.path.exists()"
 w, h = temp_edges.shape[::-1]
 
@@ -37,7 +37,7 @@ def canny_edge(frame):
 
 # if a video path was not supplied, grab the reference to the webcam
 if not args.get("video", False):
-	vs = VideoStream(src=0).start()
+	vs = VideoStream(src=1).start()
 # otherwise, grab a reference to the video file
 else:
 	vs = cv2.VideoCapture(args["video"])
@@ -55,6 +55,7 @@ while True:
 	if frame is None:
 		break
 	# Apply Canny edge detection and template matching
+	frame = imutils.resize(frame, width=360, height=240)
 	blurred_frame, edges_frame = canny_edge(frame)
 	res = cv2.matchTemplate(edges_frame, temp_edges, cv2.TM_CCORR_NORMED)
 	min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
@@ -63,7 +64,7 @@ while True:
 	cv2.rectangle(frame, top_left, bottom_right, (255, 0, 0), 2)
 
 	# Tracking green ball
-	mask = cv2.inRange(cv2.cvtColor(cv2.GaussianBlur(imutils.resize(frame, width=600), (11, 11), 0), cv2.COLOR_BGR2HSV), greenLower, greenUpper)
+	mask = cv2.inRange(cv2.cvtColor(cv2.GaussianBlur(imutils.resize(frame, width=360, height=240), (11, 11), 0), cv2.COLOR_BGR2HSV), greenLower, greenUpper)
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
 	cnts = imutils.grab_contours(cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE))
@@ -73,6 +74,7 @@ while True:
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+		print(center)
 		if radius > 10:
 			cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
 			cv2.circle(frame, center, 5, (0, 0, 255), -1)

@@ -6,7 +6,7 @@ global_start_coords = (0.0, 0.0)
 global_end_coords = (100.0, 100.0)
 global_ball_coords = (50.0, 50.0)
 
-temp_edges = cv2.imread("vision\Images\TemplateCropped360x240.jpg", cv2.IMREAD_GRAYSCALE)
+temp_edges = cv2.imread("/Users/arneshsaha/Desktop/FoozBot/vision/Images/TemplateNewCropped360x240.jpg", cv2.IMREAD_GRAYSCALE)
 assert temp_edges is not None, "file could not be read, check with os.path.exists()"
 
 
