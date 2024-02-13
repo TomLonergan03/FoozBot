@@ -73,6 +73,26 @@ class KalmanPredictor:
         return Trajectory(future)
 
 
+class PolyPredictor:
+    def __init__(self, degree) -> None:
+        self.history = deque(maxlen=20)
+        self.degree = degree
+
+    def update(self, location: Location) -> Trajectory:
+        self.history.append(location)
+        result_x = np.polyfit(range(1, len(self.history) + 1),
+                              [loc.x for loc in self.history],
+                              self.degree)
+        result_y = np.polyfit(range(1, len(self.history) + 1),
+                              [loc.y for loc in self.history],
+                              self.degree)
+        time = np.linspace(0, len(self.history) + 1, 10)
+        x = np.polyval(result_x, time)
+        y = np.polyval(result_y, time)
+        future = [Location(x[i], y[i], location.time) for i in range(len(x))]
+        return Trajectory(future)
+
+
 KNOWN_LOCATIONS = [Location(110, 120, 1),
                    Location(120, 125, 2)]
 
@@ -84,6 +104,14 @@ KNOWN_LOCATIONS_2 = [Location(110, 120, 1),
                      Location(160, 145, 6),
                      Location(170, 150, 7),
                      Location(180, 155, 8)]
+
+KNOWN_LOCATIONS_3 = [Location(110, 120, 1),
+                     Location(120, 125, 2),
+                     Location(130, 130, 3),
+                     Location(140, 132, 4),
+                     Location(150, 134, 5),
+                     Location(160, 135, 6),
+                     Location(170, 130, 7),]
 
 
 def naive():
@@ -122,6 +150,30 @@ def kalman():
     cv2.waitKey(0)
 
 
+def func(x, a, b, c):
+    return a * x ** 2 + b * x + c
+
+
+def poly():
+    img = np.zeros((480, 480, 3), np.uint8)
+    cv2.rectangle(img, (100, 100), (300, 300), (220, 0, 0), 3)
+    predictor = PolyPredictor()
+    last_loc = None
+    for location in KNOWN_LOCATIONS_3:
+        cv2.circle(img, (int(location.x), int(location.y)),
+                   4, (0, 220, 20), -1)
+        last_loc = predictor.update(location).locations[-1]
+        cv2.circle(img, (int(last_loc.x), int(last_loc.y)),
+                   6, (0, 20, 220), 1)
+    for _ in range(50):
+        last_loc = predictor.update(last_loc).locations[-1]
+        cv2.circle(img, (int(last_loc.x), int(last_loc.y)),
+                   6, (0, 20, 220), 1)
+        cv2.imshow("Prediction", img)
+        cv2.waitKey(0)
+
+
 if __name__ == "__main__":
     naive()
     kalman()
+    poly()
