@@ -1,13 +1,13 @@
 <!-- Bar-->
-<div class="absolute bottom-0 bg-stone-300 rounded-3xl border border-black border-1 m-1 bg-gradient-to-tr from-stone-300 to-stone-400 font-semibold font-serif">
+<div class="bottom-0 rounded-3xl border border-black border-2 m-1 bg-gradient-to-tr from-blue-900 to-FoozbotLBlue font-semibold font-serif">
 
     <div class="grid gap-x-2 gap-y-1 grid-cols-4 grid-rows-3 m-2">
         <!-- You must be the change you wish to see in the world. - Mahatma Gandhi -->
 
         <!-- Row 1-->
         <!-- 1-->
-        <div class="row-span-3">
-            <a href="/"><img class="min-h-20 min-w-80 " src="/images/FoozBotLogo.png"></a>
+        <div class="row-span-3 lg:block hidden">
+            <a href="/"><img class="min-h-20 min-w-80" src="/images/FoozBotLogo.png"></a>
         </div>
 
         <!-- 2 -->

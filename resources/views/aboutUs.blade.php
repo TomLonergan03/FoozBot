@@ -6,19 +6,29 @@
 
         <!-- Main Text Blurb-->
         <div class="flex justify-center items-center my-14 ">
-            <div class="basis-1/2 bg-gradient-to-bl from-stone-300 to-stone-400 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink">
-                <h1 class="pt-4 text-center text-2xl font-semibold">Meet the Foozbot Team!</h1>
-                <p class="p-4 text-center h-64">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="basis-1/2 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink-0 text-white">
+                <h1 class="pt-4 text-center text-4xl font-semibold">Meet the Foozbot Team!</h1>
+                <p class="p-4 text-center min-h-24">
+                    The team behind Foozbot are but humble students from the University Of Edinburgh's Informatics Department. Tasked with designing an "Assistive Robot", we created Foozbot - a robot helping people of all ages, abilities, and adequacy enjoy Foozball!
+                </p>
+
+                <ul class="pl-8 list-disc font-semibold text-yellow-300">
+                    <li>Documentation Team: Dorna, Arnesh </li><br>
+                    <li>Hardware Team: Rose, Milena </li><br>
+                    <li>Software: Nathan, Tom, Yichun</li><br>
+                </ul>
+
+
             </div>
         </div>
 
         <!-- 3 Lined-Up images -->
 
         <div class="flex justify-center items-center my-6">
-            <div class="grid grid-cols-3 gap-4">
-                <img src="images/placeholder.jpg" class="rounded-xl border border-slate-500">
-                <img src="images/placeholder.jpg" class="rounded-xl border border-slate-500">
-                <img src="images/placeholder.jpg" class="rounded-xl border border-slate-500">
+            <div class="grid md:grid-cols-3 md:grid-rows-1 grid-rows-3 grid-cols-1 gap-4">
+                <img src="images/model_in_lego.jpg" class="bg-red-500 rounded-xl border-4 border-slate-500 shadow-lg flex justify-center align-middle overflow-hidden ">
+                <img src="images/motors.jpg" class="bg-red-500 rounded-xl border-4 border-slate-500 shadow-lg flex justify-center align-middle overflow-hidden">
+                <img src="images/model_in_lego.jpg" class="bg-red-500 rounded-xl border-4 border-slate-500 shadow-lg flex justify-center align-middle overflow-hidden">
             </div>
         </div>
 

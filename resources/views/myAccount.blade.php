@@ -3,7 +3,7 @@
 
     <!-- Main Buy Bubble-->
     <div class="flex justify-center mt-16 mb-6">
-        <div class="py-4 px-12 bg-gradient-to-bl from-stone-300 to-stone-400 rounded-xl border border-slate-500 shadow-lg">
+        <div class="py-4 px-12 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover text-white border-4 border-slate-500 shadow-lg rounded-xl">
             <h1 class="text-center">
                 Your Foozbot Account
             </h1>
@@ -11,22 +11,22 @@
     </div>
 
     <div class = 'flex items-center justify-center m-4' >
-        <div method = 'POST' action ='/sessions' onsubmit="submit.disabled = true; return true;" class="p-4 bg-gradient-to-bl from-stone-300 to-stone-400 rounded-xl border border-slate-500 shadow-lg text-center">
+        <div method = 'POST' action ='/sessions' onsubmit="submit.disabled = true; return true;" class="p-4 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover text-white border-4 border-slate-500 shadow-lg rounded-xl text-center">
             <h1>Username: {{auth()->user()->username}}</h1>
         </div>
     </div>
 
     <div class = 'flex items-center justify-center m-4' >
-        <div method = 'POST' action ='/sessions' onsubmit="submit.disabled = true; return true;" class="p-4 bg-gradient-to-bl from-stone-300 to-stone-400 rounded-xl border border-slate-500 shadow-lg text-center">
+        <div method = 'POST' action ='/sessions' onsubmit="submit.disabled = true; return true;" class="p-4 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover text-white border-4 border-slate-500 shadow-lg rounded-xl text-center">
             <h1>Email: {{auth()->user()->email}}</h1>
         </div>
     </div>
 
-    <div class = 'flex items-center justify-center m-4' >
-        <div method = 'POST' action ='/sessions' onsubmit="submit.disabled = true; return true;" class="p-4 bg-gradient-to-bl from-stone-300 to-stone-400 rounded-xl border border-slate-500 shadow-lg text-center">
-            <h1>Foozbot Purchased: {{auth()->user()->userType}}</h1>
-        </div>
-    </div>
+<!--    <div class = 'flex items-center justify-center m-4' >-->
+<!--        <div method = 'POST' action ='/sessions' onsubmit="submit.disabled = true; return true;" class="p-4 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover text-white border-4 border-slate-500 shadow-lg rounded-xl text-center">-->
+<!--            <h1>Foozbot Purchased: {{auth()->user()->userType}}</h1>-->
+<!--        </div>-->
+<!--    </div>-->
 
     <div class = 'flex items-center justify-center m-4' >
         <button>
