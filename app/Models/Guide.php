@@ -28,4 +28,5 @@ class Guide extends Model
     }
 
 
+
 }

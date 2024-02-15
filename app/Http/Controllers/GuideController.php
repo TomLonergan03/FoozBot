@@ -12,18 +12,56 @@ class GuideController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($filter):View{
+    public function index():View{
 
         #Featured Guides - I.E made by developers
-
         $featured = DB::table('guides')->where('featured', 1)->orderBy('posted', 'desc')->get();
 
         #All Guides
-        $guides = DB::table('guides')->where('featured', 0)->orderBy('posted', 'desc')->get();
+        $guides = DB::table('guides')
+            ->join('users', 'users.id', '=', 'user_id')
+            ->where('featured', 0)
+            ->select('*', 'guides.id as post_id')
+            ->orderBy('posted', 'desc')
+            ->groupBy("guides.id")
+            ->limit(4)
+            ->get();
 
         #Return
-        return view('guidesLanding', ['featured' => $featured, 'guides' => $guides]);
+        return view('guidesLanding', ['featured' => $featured, 'posts' => $guides, 'keys' => $guides->keys()]);
+    }
 
+
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function indexBy($filter):View{
+
+
+        if ($filter == "oldest"):
+            #All Guides
+            $guides = DB::table('guides')
+                ->join('users', 'users.id', '=', 'user_id')
+                ->where('featured', 0)
+                ->select('*', 'guides.id as post_id')
+                ->orderBy('guides.updated_at', 'asc')
+                ->groupBy("guides.id")
+                ->get();
+
+        else:
+            $guides = DB::table('guides')
+                ->join('users', 'users.id', '=', 'user_id')
+                ->where('featured', 0)
+                ->select('*', 'guides.id as post_id')
+                ->orderBy('guides.updated_at', 'desc')
+                ->groupBy("guides.id")
+                ->get();
+
+        endif;
+
+        #Return
+        return view('allGuides', ['orderBy' => $filter, 'posts' => $guides]);
     }
 
 
@@ -61,15 +99,23 @@ class GuideController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Guide $guideName): View
+    public function show($guideid): View
     {
-        //get the guide
-        $guide = DB::table('Guides')->join('users', 'users.id', '=', 'user_id')->where('title', $guideName)->paginate(20)->get();
 
-        $id = $guide[0]->id;
+        $guide = DB::table('guides')
+            ->join('users', 'users.id', '=', 'user_id')
+            ->where('guides.id', $guideid)
+            ->select('*', 'guides.id as post_id')
+            ->groupBy("guides.id")
+            ->first();
 
-        //get the comment(s)
-        $comments = DB::table('Comments')->join('guides', 'users.id', '=', 'user_id')->where('guide_id', $id)->get();
+        $comments = DB::table('comments')
+            ->join('users', 'users.id', '=', 'user_id')
+            ->where('comments.id', $guideid)
+            ->select('*', 'comments.id as comment_id')
+            ->orderBy("comments.created_at", "desc")
+            ->groupBy("comments.id")
+            ->get();
 
         //return the view with the one guide, and its comments
         return view('individualGuide', ['featured' => $guide, 'comments' => $comments]);

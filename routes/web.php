@@ -44,7 +44,7 @@ Route::get('/aboutUs', function () {
 Route::get('/posts', [GuideController::class, 'index']);
 Route::get('/posts/{filter}', [GuideController::class, 'indexBy'])->where(['filter' => '[a-zA-Z0-9]+']);
 Route::post('/posts/show/add', [GuideController::class, 'store'])->middleware('auth');
-Route::get('/posts/show/{guideName}', [GuideController::class, 'show'])->where(['guideName' => '[a-zA-Z0-9]+']);
+Route::get('/posts/show/{guideid}', [GuideController::class, 'show'])->where(['guideid' => '[a-zA-Z0-9]+']);
 Route::post('/posts/show/{guideName}/leaveComment', [GuideController::class, 'store'])->where(['guideName' => '[a-zA-Z0-9]+'])->middleware('auth');
 
 

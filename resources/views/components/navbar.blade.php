@@ -46,8 +46,8 @@
         </a>
 
         <!-- 5 -->
-        <a href="/guides/none">
-            <h1 class="text-center p-1 md:p-4 overflow-hidden  border border-4 border-black rounded-2xl shadow-lg bg-FoozbotDBlue hover:bg-FoozbotLBlue min-w-16">Guides</h1>
+        <a href="/posts">
+            <h1 class="text-center p-1 md:p-4 overflow-hidden  border border-4 border-black rounded-2xl shadow-lg bg-FoozbotDBlue hover:bg-FoozbotLBlue min-w-16">Posts</h1>
         </a>
 
         <!-- 6 -->

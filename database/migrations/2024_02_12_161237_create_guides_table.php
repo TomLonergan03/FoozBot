@@ -17,6 +17,7 @@ return new class extends Migration
             $table->MEDIUMTEXT("text");
             $table->timestamp("posted")->nullable();
             $table->integer("featured")->default("0");
+            $table->foreignId("user_id");
             $table->timestamps();
         });
     }

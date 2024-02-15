@@ -11,10 +11,11 @@
             <h1>Current Category : {{$currentcategory}}</h1>
 
             <div class="flex items-center justify-center">
-                <div class=" text-center py-2 overflow-y-scroll max-h-20 w-40">
+                <div class=" text-center py-2 overflow-y-scroll max-h-20 w-40 z-10">
                     @foreach ($categories as $c)
+                        <h1 class="p-1"> </h1>
                         <a href="/records/{{$c->category}}" class="text-center border border-grey-700 rounded-xl p-1 shadow-lg bg-FoozbotDBlue inline hover:bg-FoozbotLBlue">{{$c->category}}</a>
-                    <h1 class="p-1"> </h1>
+                        <h1 class="p-1"> </h1>
                     @endforeach
                 </div>
 
@@ -43,15 +44,29 @@
             </tr>
 
             @foreach ($scores as $score)
-            <tr>
-                <td class="border-x-2 border-gray-200 p-1">{{$score->username}}</td>
-                <td class="px-2"></td>
-                <td class="border-x-2 border-gray-200 p-1">{{$score->score}}</td>
-                <td class="px-2"></td>
-                <td class="border-x-2 border-gray-200 p-1">{{$score->time}}</td>
-                <td class="px-2"></td>
-                <td class="border-x-2 border-gray-200 p-1">{{$score->category}}</td>
-            </tr>
+
+                @if($loop->even)
+                    <tr>
+                        <td class="border-x-2 border-gray-200 p-1">{{$score->username}}</td>
+                        <td class="px-2"></td>
+                        <td class="border-x-2 border-gray-200 p-1">{{$score->score}}</td>
+                        <td class="px-2"></td>
+                        <td class="border-x-2 border-gray-200 p-1">{{$score->time}}</td>
+                        <td class="px-2"></td>
+                        <td class="border-x-2 border-gray-200 p-1">{{$score->category}}</td>
+                    </tr>
+                @else
+                    <tr>
+                        <td class="border-x-2 border-gray-200 p-1 text-gray-300">{{$score->username}}</td>
+                        <td class="px-2"></td>
+                        <td class="border-x-2 border-gray-200 p-1 text-gray-300">{{$score->score}}</td>
+                        <td class="px-2"></td>
+                        <td class="border-x-2 border-gray-200 p-1 text-gray-300">{{$score->time}}</td>
+                        <td class="px-2"></td>
+                        <td class="border-x-2 border-gray-200 p-1 text-gray-300">{{$score->category}}</td>
+                    </tr>
+                @endif
+
             @endforeach
         </table>
 
