@@ -5,8 +5,8 @@
     <div class="mx-8 p-4">
 
         <!-- Main Text Blurb-->
-        <div class="flex justify-center items-center my-14 ">
-            <div class="basis-1/2 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink-0 text-white">
+        <div class="flex justify-center items-center my-14">
+            <div class="sm:basis-1/2 basis-2/3 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink-0 text-white">
                 <h1 class="pt-4 text-center text-4xl font-semibold">Meet the Foozbot Team!</h1>
                 <p class="p-4 text-center min-h-24">
                     The team behind Foozbot are but humble students from the University Of Edinburgh's Informatics Department. Tasked with designing an "Assistive Robot", we created Foozbot - a robot helping people of all ages, abilities, and adequacy enjoy Foozball!

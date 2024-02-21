@@ -43,9 +43,10 @@ Route::get('/aboutUs', function () {
 //Guides
 Route::get('/posts', [GuideController::class, 'index']);
 Route::get('/posts/{filter}', [GuideController::class, 'indexBy'])->where(['filter' => '[a-zA-Z0-9]+']);
+Route::get('/posts/show/add', function (){return view('addGuide');})->middleware('auth');
 Route::post('/posts/show/add', [GuideController::class, 'store'])->middleware('auth');
 Route::get('/posts/show/{guideid}', [GuideController::class, 'show'])->where(['guideid' => '[a-zA-Z0-9]+']);
-Route::post('/posts/show/{guideName}/leaveComment', [GuideController::class, 'store'])->where(['guideName' => '[a-zA-Z0-9]+'])->middleware('auth');
+Route::post('/posts/show/{guideid}/leaveComment', [GuideController::class, 'storeComment'])->where(['guideid' => '[0-9]'])->middleware('auth');
 
 
 //Buy Foozbot

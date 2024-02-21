@@ -24,7 +24,7 @@ class LeaderboardController extends Controller
 
         $request->user()->leaderboard()->create($validated);
 
-        return redirect(route('chirps.index'));
+        return redirect(route('/'));
     }
 
     public function displayAll($category):View{

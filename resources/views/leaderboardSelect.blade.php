@@ -8,10 +8,10 @@
         <div class="border-4 border-slate-500 shadow-lg p-2 rounded-xl bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover text-white">
 
             <h1 class="text-center font-semibold text-xl pb-1"><u>Select a Category</u></h1>
-            <h1>Current Category : {{$currentcategory}}</h1>
+            <h1 class="text-center sm:text-left" >Current Category : {{$currentcategory}}</h1>
 
             <div class="flex items-center justify-center">
-                <div class=" text-center py-2 overflow-y-scroll max-h-20 w-40 z-10">
+                <div class=" text-center py-2 overflow-y-scroll max-h-20 w-40 z-4">
                     @foreach ($categories as $c)
                         <h1 class="p-1"> </h1>
                         <a href="/records/{{$c->category}}" class="text-center border border-grey-700 rounded-xl p-1 shadow-lg bg-FoozbotDBlue inline hover:bg-FoozbotLBlue">{{$c->category}}</a>
@@ -35,8 +35,8 @@
                 <th class="border-2 border-gray-200 p-2 rounded-lg">Score</th>
                 <td class="px-2"></td>
                 <th class="border-2 border-gray-200 p-2 rounded-lg">Time(Seconds)</th>
-                <td class="px-2"></td>
-                <th class="border-2 border-gray-200 p-2 rounded-lg">Category</th>
+                <td class="px-2 hidden sm:block"></td>
+                <th class="border-2 border-gray-200 p-2 rounded-lg hidden sm:block">Category</th>
             </tr>
 
             <tr>
@@ -52,8 +52,8 @@
                         <td class="border-x-2 border-gray-200 p-1">{{$score->score}}</td>
                         <td class="px-2"></td>
                         <td class="border-x-2 border-gray-200 p-1">{{$score->time}}</td>
-                        <td class="px-2"></td>
-                        <td class="border-x-2 border-gray-200 p-1">{{$score->category}}</td>
+                        <td class="px-2hidden sm:block"></td>
+                        <td class="border-x-2 border-gray-200 p-1 hidden sm:block">{{$score->category}}</td>
                     </tr>
                 @else
                     <tr>
@@ -62,8 +62,8 @@
                         <td class="border-x-2 border-gray-200 p-1 text-gray-300">{{$score->score}}</td>
                         <td class="px-2"></td>
                         <td class="border-x-2 border-gray-200 p-1 text-gray-300">{{$score->time}}</td>
-                        <td class="px-2"></td>
-                        <td class="border-x-2 border-gray-200 p-1 text-gray-300">{{$score->category}}</td>
+                        <td class="px-2 hidden sm:block"></td>
+                        <td class="border-x-2 border-gray-200 p-1 text-gray-300 hidden sm:block">{{$score->category}}</td>
                     </tr>
                 @endif
 

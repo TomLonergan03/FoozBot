@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Guide;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -47,7 +48,7 @@ class GuideController extends Controller
                 ->select('*', 'guides.id as post_id')
                 ->orderBy('guides.updated_at', 'asc')
                 ->groupBy("guides.id")
-                ->get();
+                ->simplePaginate(4);
 
         else:
             $guides = DB::table('guides')
@@ -56,7 +57,7 @@ class GuideController extends Controller
                 ->select('*', 'guides.id as post_id')
                 ->orderBy('guides.updated_at', 'desc')
                 ->groupBy("guides.id")
-                ->get();
+                ->simplePaginate(4);
 
         endif;
 
@@ -80,21 +81,36 @@ class GuideController extends Controller
     public function store(Request $request)
     {
         $attributes1 = request()->validate([
-            'title' => ['required', 'max:20', 'min:3', 'alpha_dash', 'unique:guides'],
+            'title' => ['required', 'max:20', 'min:3'],
             'text' => ['required', 'max:500', 'min:10'],
         ]);
 
 
-        //mass assignment might/will stop the user_type_id
-        $guide = Guide::create([
-            'title' => $attributes1['title'],
-            'text' => $attributes1['text'],
-        ]);
+        //
+        $request->user()->guides()->create($attributes1);
 
 
-        return redirect('/guides/none')->with('passed', 'Post Created!');
+
+        return redirect('/posts/newest')->with('passed', 'Post Created!');
 
     }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeComment(Request $request)
+    {
+        $validated = request()->validate([
+            'text' => ['required', 'max:500', 'string'],
+            'guide_id' => ['required', 'numeric']
+        ]);
+
+        $request->user()->comments()->create(['text'=>$validated['text'], 'guide_id'=>$validated['guide_id']]);
+
+        return redirect('/posts/show/' . $validated['guide_id'])->with('passed', 'Comment Created!');
+
+    }
+
 
     /**
      * Display the specified resource.
@@ -111,14 +127,13 @@ class GuideController extends Controller
 
         $comments = DB::table('comments')
             ->join('users', 'users.id', '=', 'user_id')
-            ->where('comments.id', $guideid)
+            ->where('comments.guide_id', $guideid)
             ->select('*', 'comments.id as comment_id')
             ->orderBy("comments.created_at", "desc")
-            ->groupBy("comments.id")
             ->get();
 
         //return the view with the one guide, and its comments
-        return view('individualGuide', ['featured' => $guide, 'comments' => $comments]);
+        return view('individualGuide', ['guide' => $guide, 'comments' => $comments]);
 
     }
 

@@ -13,6 +13,7 @@ class Comment extends Model
     #Values fillable for sql
     protected $fillable = [
         'text',
+        'guide_id'
     ];
 
     public function guide(): BelongsTo

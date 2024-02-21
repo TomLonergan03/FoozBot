@@ -19,7 +19,7 @@
                 <h1 class="text-center text-grey-200 text-lg pb-1"><i>{{$orderBy}}</i></h1>
 
                 <div class="flex items-center justify-center">
-                    <div class=" text-center py-2 overflow-y-scroll max-h-20 w-40 z-10">
+                    <div class=" text-center py-2 overflow-y-scroll max-h-20 w-40 z-4">
                         <h1 class="p-1"> </h1>
                         <a href="/posts/newest" class="text-center border border-grey-700 rounded-xl p-1 shadow-lg bg-FoozbotDBlue inline hover:bg-FoozbotLBlue">Newest</a>
                         <h1 class="p-1"> </h1>
@@ -28,6 +28,12 @@
                         <h1 class="p-1"> </h1>
                     </div>
 
+                </div>
+                <div class="flex items-center justify-center">
+                    <div class=" text-center py-2 overflow-y-scroll max-h-20 w-40 z-4">
+                        <h1 class="p-1"> </h1>
+                        <a href="/posts/show/add" class="text-center border border-grey-700 rounded-xl p-1 shadow-lg bg-FoozbotDBlue inline hover:bg-FoozbotLBlue">Create Post</a>
+                    </div>
                 </div>
             </div>
 
@@ -38,11 +44,11 @@
         <div>
             <!-- Grid of Aux Bubbles -->
             <div class="flex justify-center items-center">
-                <div class="grid lg:grid-cols-2 lg:grid-rows-2 grid-cols-1 grid-rows-4 gap-y-16 gap-x-16 mx-60 max-w-6xl lg:shrink-0 lg:size-11/12 min-w-64 md:text-base lg:text-xl">
+                <div class="grid lg:grid-cols-2 lg:grid-rows-2 grid-cols-1 grid-rows-4 gap-y-20 gap-x-20 mx-60 max-w-6xl lg:shrink-0 lg:size-11/12 min-w-64 md:text-base lg:text-xl mb-12">
 
                     @foreach($posts as $post)
                     <!-- Layer One -->
-                    <div class="basis-1/2 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink-0 text-white overflow-y-scroll max-h-64">
+                    <div class="hover:scale-125 hover:translate-y-4 basis-1/2 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink-0 text-white overflow-y-scroll max-h-64 ">
 
                         <a href="/posts/show/{{$post->post_id}}">
                             <div class="pt-4 text-center text-4xl font-bold sticky inset-x-0 top-0 bg-gradient-to-bl from-stone-500 to-stone-800 pb-4 border-1 border-black">
@@ -59,6 +65,10 @@
                     @endforeach
                 </div>
             </div>
+
+
+            {{$posts->links()}}
+
         </div>
 
     </section>
