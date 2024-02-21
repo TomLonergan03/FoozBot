@@ -22,8 +22,16 @@ We need some kind of way of storing the information:
 - the orientation of the players (horizontal or vertical)
 - if the players are currently in the process of kicking
 
+I think the interface should be:
+- + updateExpectedBallIntersection((float, float)) : void
+ 
+
+
 # Ball Path Finder
 I suggest that we make a common interface for the different classes which predict ball trajectories. This will make it easy to swap them and test out which one works best, without having to change the surrounding code. 
 Each ball trajectory prediction class should have the interface:
 - +updateBallPosition(newBallCoordinate : (float, float)) : void
 - +getExpectedPlayersIntersections() : (1stLineIntersection : float, 2ndLineIntersection : float)
+
+
+https://lucid.app/lucidchart/0f490852-ef52-4b66-8960-b31c48a7820a/edit?viewport_loc=645%2C-68%2C2715%2C1414%2CHWEp-vi-RSFO&invitationId=inv_c0d90721-483f-4a9c-8954-a4b1f582b34d
