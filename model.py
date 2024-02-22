@@ -34,14 +34,16 @@ KNOWN_LOCATIONS = [Location(110, 120, 1),
 
 
 class Model:
-    def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0, y_attraction_force: float = 0,  board_x: int = 200, board_y: int = 200):
+    def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0, y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 200, board_max_y: int = 200):
         self.history = deque(maxlen=2)
         self.history.append(initial_pos)
         self.friction = 1 - friction
         self.x_attraction_force = x_attraction_force
         self.y_attraction_force = y_attraction_force
-        self.board_x = board_x
-        self.board_y = board_y
+        self.board_max_x = board_max_x
+        self.board_max_y = board_max_y
+        self.board_min_x = board_min_x
+        self.board_min_y = board_min_y
 
     def update(self, location: Location) -> Trajectory:
         self.history.append(location)
@@ -59,32 +61,35 @@ class Model:
             (trajectory[-1].time - trajectory[-2].time)
 
         # attract to the center
-        dx -= (trajectory[-1].x - self.board_x) * self.x_attraction_force
-        dy -= (trajectory[-1].y - self.board_y) * self.y_attraction_force
+        dx -= (trajectory[-1].x - (self.board_max_x -
+               self.board_min_x) / 2) * self.x_attraction_force
+        dy -= (trajectory[-1].y - (self.board_max_y -
+               self.board_min_y)/2) * self.y_attraction_force
 
         # friction
         dx *= self.friction
         dy *= self.friction
 
-        if trajectory[-1].x >= 300 or trajectory[-1].x <= 100:
+        if trajectory[-1].x >= self.board_max_x or trajectory[-1].x <= self.board_min_x:
             dx = -dx
-        if trajectory[-1].y >= 300 or trajectory[-1].y <= 100:
+        if trajectory[-1].y >= self.board_max_y or trajectory[-1].y <= self.board_min_y:
             dy = -dy
         new_location = Location(
             trajectory[-1].x + dx * time, trajectory[-1].y + dy * time, trajectory[-1].time + time)
         return new_location
 
 
-ATTRACTION_FORCE = 0.00008
-FRICTION = 0.01
+if __name__ == "__main__":
+    ATTRACTION_FORCE = 0.00008
+    FRICTION = 0.01
 
-model = Model(KNOWN_LOCATIONS[0], FRICTION,
-              ATTRACTION_FORCE, ATTRACTION_FORCE)
-for i in range(1, len(KNOWN_LOCATIONS)):
-    image = np.zeros((480, 480, 3), np.uint8)
-    cv2.rectangle(image, (100, 100), (300, 300), (220, 0, 0), 3)
-    display_trajectory(image, Trajectory(KNOWN_LOCATIONS[:i]), (0, 0, 255))
-    future = model.update(KNOWN_LOCATIONS[i])
-    display_trajectory(image, future, (0, 255, 0))
-    cv2.imshow("trajectory", image)
-    cv2.waitKey(0)
+    model = Model(KNOWN_LOCATIONS[0], FRICTION,
+                  ATTRACTION_FORCE, ATTRACTION_FORCE)
+    for i in range(1, len(KNOWN_LOCATIONS)):
+        image = np.zeros((480, 480, 3), np.uint8)
+        cv2.rectangle(image, (100, 100), (300, 300), (220, 0, 0), 3)
+        display_trajectory(image, Trajectory(KNOWN_LOCATIONS[:i]), (0, 0, 255))
+        future = model.update(KNOWN_LOCATIONS[i])
+        display_trajectory(image, future, (0, 255, 0))
+        cv2.imshow("trajectory", image)
+        cv2.waitKey(0)
