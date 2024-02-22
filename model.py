@@ -34,7 +34,7 @@ KNOWN_LOCATIONS = [Location(110, 120, 1),
 
 
 class Model:
-    def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0, y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 200, board_max_y: int = 200):
+    def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0, y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 200, board_max_y: int = 200, iterations: int = 200, friction_limit: int = 0):
         self.history = deque(maxlen=2)
         self.history.append(initial_pos)
         self.friction = 1 - friction
@@ -44,14 +44,19 @@ class Model:
         self.board_max_y = board_max_y
         self.board_min_x = board_min_x
         self.board_min_y = board_min_y
+        self.prediction = initial_pos
+        self.iterations = iterations
+        self.friction_limit = friction_limit
 
     def update(self, location: Location) -> Trajectory:
-        self.history.append(location)
+        self.history.append(
+            Location((location.x + self.prediction.x)/2, (location.y + self.prediction.y)/2, location.time))
         future = []
         future.extend(self.history)
-        for i in range(200):
+        for _ in range(self.iterations):
             future.append(self.calculateFutureLocation(
                 future, 0.1))
+        self.prediction = future[2]
         return Trajectory([location] + future[2:])
 
     def calculateFutureLocation(self, trajectory: Trajectory, time: float) -> Location:
@@ -67,8 +72,10 @@ class Model:
                self.board_min_y)/2) * self.y_attraction_force
 
         # friction
-        dx *= self.friction
-        dy *= self.friction
+        if dx > self.friction_limit or dx < -self.friction_limit:
+            dx *= self.friction
+        if dy > self.friction_limit or dy < -self.friction_limit:
+            dy *= self.friction
 
         if trajectory[-1].x >= self.board_max_x or trajectory[-1].x <= self.board_min_x:
             dx = -dx
