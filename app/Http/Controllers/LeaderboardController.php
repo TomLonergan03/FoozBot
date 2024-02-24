@@ -34,11 +34,11 @@ class LeaderboardController extends Controller
 
 
         if(!empty($category)){
-            $scores = DB::table('leaderboards')->join('users', 'users.id', '=', 'user_id')->where('category', $category)->orderBy('score', 'desc')->get();
+            $scores = DB::table('leaderboards')->join('users', 'users.id', '=', 'user_id')->where('category', $category)->orderBy('score', 'desc')->take(100)->get();
             return view('leaderboardSelect', ['scores' => $scores, 'categories' => $categories, 'currentcategory' => $category]);
         }
 
-        $scores = DB::table('leaderboards')->join('users', 'user_id', '=', 'user_id')->where('category', $category)->orderBy('score', 'desc')->get();
+        $scores = DB::table('leaderboards')->join('users', 'user_id', '=', 'user_id')->where('category', $category)->orderBy('score', 'desc')->take(100)->get();
         return view('leaderboardSelect', ['scores' => $scores, 'categories' => $categories, 'currentcategory' => $category]);
 
     }

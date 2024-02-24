@@ -16,9 +16,9 @@
                 <div class="grid lg:grid-cols-2 lg:grid-rows-1 grid-cols-1 grid-rows-2 gap-y-16 gap-x-16 mx-60 max-w-6xl lg:shrink-0 lg:size-11/12 min-w-64 md:text-base lg:text-xl">
 
                     <!-- User -->
-                    <div class="basis-1/2 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink-0 text-white overflow-y-scroll max-h-64">
+                    <div class="hover:scale-125 hover:translate-y-4 basis-1/2 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink-0 text-white overflow-y-scroll max-h-64">
 
-                        <a href="/posts/developer/">
+                        <a href="/userInfo">
                             <div class="pt-4 text-center text-4xl font-bold sticky inset-x-0 top-0 bg-gradient-to-bl from-stone-500 to-stone-800 pb-4 border-1 border-black">
                                 <h1 class="">User Guide</h1>
                                 <p class="text-xs">By: Foozbot Developers</p>
@@ -32,11 +32,11 @@
                     </div>
 
                     <!-- User -->
-                    <div class="basis-1/2 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink-0 text-white overflow-y-scroll max-h-64">
+                    <div class="hover:scale-125 hover:translate-y-4 basis-1/2 bg-gradient-to-bl from-stone-500 to-stone-800 bg-cover rounded-xl border-4 border-slate-500 shadow-lg shrink-0 text-white overflow-y-scroll max-h-64">
 
-                        <a href="/posts/developer/safety">
+                        <a href="/privacyPolicy">
                             <div class="pt-4 text-center text-4xl font-bold sticky inset-x-0 top-0 bg-gradient-to-bl from-stone-500 to-stone-800 pb-4 border-1 border-black">
-                                <h1 class="">User Guide</h1>
+                                <h1 class="">Safety Guide</h1>
                                 <p class="text-xs">By: Foozbot Developers</p>
                                 <p class="text-xs">Posted: 20/02/2024</p>
                             </div>

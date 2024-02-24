@@ -1,5 +1,5 @@
 <!-- Bar-->
-<div class="bottom-0 rounded-3xl border border-black border-2 m-1 bg-gradient-to-tr from-blue-900 to-FoozbotLBlue font-semibold font-serif">
+<div class="bottom-0 static rounded-3xl border border-black border-2 m-1 bg-gradient-to-tr from-blue-900 to-FoozbotLBlue font-semibold font-serif">
 
     <div class="grid gap-x-2 gap-y-1 grid-cols-4 grid-rows-3 m-2">
         <!-- You must be the change you wish to see in the world. - Mahatma Gandhi -->
@@ -12,9 +12,9 @@
 
         <!-- 2 -->
         <div id="title" class="py-2 row-span-3 lg:col-span-1 col-span-3 pl-2 text-left">
-            <button class="rounded-3xl hover:text-FoozbotDBlue block">Privacy Policy</button>
-            <button class="rounded-3xl  hover:text-FoozbotDBlue block">Terms And Conditions</button>
-            <button class="rounded-3xl  hover:text-FoozbotDBlue block">Safety Guide</button>
+            <button class="rounded-3xl hover:text-FoozbotDBlue block"><a href="/privacyPolicy">Privacy Policy</a></button>
+            <button class="rounded-3xl  hover:text-FoozbotDBlue block"><a href="/termsConditions">Terms And Conditions</a></button>
+            <button class="rounded-3xl  hover:text-FoozbotDBlue block"><a href="/userInfo">User Guide</a></button>
         </div>
 
         <!-- 3 -->

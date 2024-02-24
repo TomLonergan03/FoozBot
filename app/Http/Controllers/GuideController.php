@@ -48,7 +48,7 @@ class GuideController extends Controller
                 ->select('*', 'guides.id as post_id')
                 ->orderBy('guides.updated_at', 'asc')
                 ->groupBy("guides.id")
-                ->simplePaginate(4);
+                ->simplePaginate(8);
 
         else:
             $guides = DB::table('guides')
@@ -57,7 +57,7 @@ class GuideController extends Controller
                 ->select('*', 'guides.id as post_id')
                 ->orderBy('guides.updated_at', 'desc')
                 ->groupBy("guides.id")
-                ->simplePaginate(4);
+                ->simplePaginate(8);
 
         endif;
 

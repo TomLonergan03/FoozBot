@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('guides', function (Blueprint $table) {
             $table->id();
-            $table->string("title")->unique();
+            $table->string("title");
             $table->MEDIUMTEXT("text");
             $table->timestamp("posted")->nullable();
             $table->integer("featured")->default("0");

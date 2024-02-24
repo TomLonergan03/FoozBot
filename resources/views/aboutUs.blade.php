@@ -15,7 +15,7 @@
                 <ul class="pl-8 list-disc font-semibold text-yellow-300">
                     <li>Documentation Team: Dorna, Arnesh </li><br>
                     <li>Hardware Team: Rose, Milena </li><br>
-                    <li>Software: Nathan, Tom, Yichun</li><br>
+                    <li>Software: Nathan, Tom, Yichun, Alex, Douglas</li><br>
                 </ul>
 
 

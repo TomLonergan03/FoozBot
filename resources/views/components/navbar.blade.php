@@ -17,14 +17,14 @@
 
         <!-- 6,7 -->
         @auth
-            <div class="lg:place-self-center lg:col-span-2 col-span-1">
+            <div class="lg:place-self-center lg:col-span-2 col-span-1 max-h-1">
                 <a href="/myAccount" class="text-center p-1 md:p-4 overflow-hidden  border border-4 border-black  rounded-2xl shadow-lg bg-FoozbotDBlue lg:inline hover:bg-FoozbotLBlue block">{{auth()->user()->username}}</a>
                 <form method="post" action="/logout" class="inline">@csrf<input class=" text-center p-3 overflow-hidden border border-4 border-black rounded-2xl shadow-xl bg-FoozbotDBlue lg:block hover:cursor-pointer hover:bg-FoozbotLBlue lg:inline hidden" type="submit" value="logout"></form>
             </div>
         @endauth
 
         @guest
-            <div class="lg:place-self-center lg:col-span-2 col-span-1">
+            <div class="lg:place-self-center lg:col-span-2 col-span-1 max-h-1">
                 <a href="/login" class="text-center p-1 md:p-4 overflow-hidden border border-4 border-black rounded-2xl shadow-lg bg-FoozbotDBlue block lg:inline hover:bg-FoozbotLBlue">Log In</a>
                 <a href="/register" class="text-center p-1 md:p-4 overflow-hidden  border border-4 border-black rounded-2xl shadow-lg bg-FoozbotDBlue block lg:inline hover:bg-FoozbotLBlue hidden">Register</a>
             </div>
@@ -41,17 +41,17 @@
         </a>
 
         <!-- 4 -->
-        <a href="/records">
+        <a href="/records" class="max-h-1">
             <h1 class="text-center p-1 md:p-4 overflow-hidden  border border-4 border-black rounded-2xl shadow-lg bg-FoozbotDBlue hover:bg-FoozbotLBlue min-w-16">Records</h1>
         </a>
 
         <!-- 5 -->
-        <a href="/posts">
+        <a href="/posts" class="max-h-1">
             <h1 class="text-center p-1 md:p-4 overflow-hidden  border border-4 border-black rounded-2xl shadow-lg bg-FoozbotDBlue hover:bg-FoozbotLBlue min-w-16">Posts</h1>
         </a>
 
         <!-- 6 -->
-        <a href="/buy">
+        <a href="/buy" class="max-h-1">
             <h1 class="text-center p-1 md:p-4 overflow-hidden  border border-4 border-black rounded-2xl shadow-lg bg-FoozbotDBlue hover:bg-FoozbotLBlue min-w-16">Buy</h1>
         </a>
 

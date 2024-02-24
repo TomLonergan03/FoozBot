@@ -13,7 +13,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
-<body class="bg-gradient-to-l from-FoozbotDBlue to-blue-900 font-mono lg:text-base xl:text-xl text-xs min-h-full">
+<body class="bg-gradient-to-l from-FoozbotDBlue to-blue-900 font-mono lg:text-base xl:text-xl text-xs min-h-screen">
 <x-navbar/>
 
         {{ $slot }}

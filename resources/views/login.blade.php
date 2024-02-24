@@ -28,9 +28,11 @@
             @enderror
             <br>
 
-            <button name = 'submit' class = 'p-4 border-2 border-gray-500 border-slate-500 rounded-2xl shadow-xl bg-FoozbotDBlue hover:cursor-pointer hover:bg-FoozbotLBlue'>Submit</button><br><br>
+            <button name = 'submit' class = 'p-4 bg-FoozbotDBlue hover:bg-FoozbotLBlue shadow-lg border-2 border-slate-500 rounded-xl shadow-lg'>Submit</button><br><br>
 
             <a href="/register" class="text-slate-100 border border-slate-500 p-2 rounded-xl text-xs bg-FoozbotDBlue hover:bg-FoozbotLBlue shadow-lg"><i>Or register here</i></a>
+            <a href="/emailNewPassword" class="text-slate-100 border border-slate-500 p-2 rounded-xl text-xs bg-FoozbotDBlue hover:bg-FoozbotLBlue shadow-lg"><i>Forgot Password</i></a>
+
 
         </form>
     </div>
