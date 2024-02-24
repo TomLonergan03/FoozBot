@@ -23,52 +23,57 @@ cv2.namedWindow("Video")
 out = cv2.VideoWriter("output.avi",
                       cv2.VideoWriter_fourcc(*"MJPG"), 30, (1280, 720))
 
-ATTRACTION_FORCE_X = 0.000004
-ATTRACTION_FORCE_Y = 0.00004
-FRICTION = 0.001
-FRICTION_LIMIT = 2
+ATTRACTION_FORCE_X = 0.0000001
+ATTRACTION_FORCE_Y = 0.00000001
+FRICTION = 0.002
+FRICTION_LIMIT = 0
+ATTRACTION_MIN_SPEED = 0.01
 
 CALCULATE_AVG = False
 
 model = Model(Location(0, 0, 0), FRICTION, ATTRACTION_FORCE_X,
               ATTRACTION_FORCE_Y, 92, 41, 1190, 614, iterations=1000,
-              friction_limit=FRICTION_LIMIT)
+              friction_limit=FRICTION_LIMIT, attraction_min_speed=ATTRACTION_MIN_SPEED)
+
+
+def process_frame(frame, location, frame_number):
+    cv2.putText(frame, f"Frame: {frame_number}", (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+    for j in range(1, len(ball_location_cleaned)):
+        cv2.line(frame, ball_location_cleaned[j - 1],
+                 ball_location_cleaned[j], (255, 0, 0), 5)
+    if location is not None:
+        cv2.circle(frame, location, 5, (0, 0, 255), -1)
+        trajectory = model.update(Location(
+            location[0], location[1], frame_number))
+        futures.append(trajectory)
+        for j in range(1, len(futures)):
+            future = futures[j]
+            for frame_number in range(1, len(future.locations)):
+                cv2.line(frame, (int(future.locations[frame_number-1].x), int(future.locations[frame_number-1].y)),
+                         (int(future.locations[frame_number].x), int(future.locations[frame_number].y)), (0, 180, 100), 2)
+        avg = [] * len(futures[0].locations)
+        for frame_number in range(len(futures[0].locations)):
+            avg.append(Location(0, 0, 0))
+        for future in futures:
+            for frame_number in range(len(future.locations)):
+                avg[frame_number] = Location(avg[frame_number].x + future.locations[frame_number].x,
+                                             avg[frame_number].y + future.locations[frame_number].y, future.locations[frame_number].time)
+        for av in avg:
+            av.x = av.x / len(futures)
+            av.y = av.y / len(futures)
+        for frame_number in range(1, len(avg)):
+            cv2.line(frame, (int(avg[frame_number-1].x), int(avg[frame_number-1].y)),
+                     (int(avg[frame_number].x), int(avg[frame_number].y)), (0, 255, 0), 2)
+    out.write(frame.astype('uint8'))
+    cv2.imshow("Video", frame)
 
 
 for i in range(int(video.get(cv2.CAP_PROP_FRAME_WIDTH))):
     ret, frame = video.read()
     if not ret:
         break
-    cv2.putText(frame, f"Frame: {i}", (10, 30),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-    for j in range(1, len(ball_location_cleaned)):
-        cv2.line(frame, ball_location_cleaned[j - 1],
-                 ball_location_cleaned[j], (255, 0, 0), 5)
-    if ball_location[i] is not None:
-        cv2.circle(frame, ball_location[i], 5, (0, 0, 255), -1)
-        trajectory = model.update(Location(
-            ball_location[i][0], ball_location[i][1], i))
-        futures.append(trajectory)
-        for j in range(1, len(futures)):
-            future = futures[j]
-            for i in range(1, len(future.locations)):
-                cv2.line(frame, (int(future.locations[i-1].x), int(future.locations[i-1].y)),
-                         (int(future.locations[i].x), int(future.locations[i].y)), (0, 180, 100), 2)
-        avg = [] * len(futures[0].locations)
-        for i in range(len(futures[0].locations)):
-            avg.append(Location(0, 0, 0))
-        for future in futures:
-            for i in range(len(future.locations)):
-                avg[i] = Location(avg[i].x + future.locations[i].x,
-                                  avg[i].y + future.locations[i].y, future.locations[i].time)
-        for av in avg:
-            av.x = av.x / len(futures)
-            av.y = av.y / len(futures)
-        for i in range(1, len(avg)):
-            cv2.line(frame, (int(avg[i-1].x), int(avg[i-1].y)),
-                     (int(avg[i].x), int(avg[i].y)), (0, 255, 0), 2)
-    out.write(frame.astype('uint8'))
-    cv2.imshow("Video", frame)
+    process_frame(frame, ball_location[i], i)
     if cv2.waitKey(33) & 0xFF == ord('q'):
         break
 
