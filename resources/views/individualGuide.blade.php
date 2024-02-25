@@ -61,7 +61,7 @@
         <div>
             <!-- Grid of Aux Bubbles -->
             <div class="flex justify-center items-center">
-                <div class="grid grid-cols-1 gap-y-4 gap-x-20 mx-60 max-w-6xl shrink-0 size-11/12 min-w-64 md:text-base lg:text-xl mb-12">
+                <div class="basis-1/2 grid grid-cols-1 gap-y-4 gap-x-20 mx-60 max-w-6xl shrink-0 size-11/12 min-w-64 md:text-base lg:text-xl mb-12">
 
                     @foreach($comments as $comment)
                     <!-- Layer One -->
