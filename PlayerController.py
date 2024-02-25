@@ -112,6 +112,46 @@ class PlayerController:
             ArduinoInterface.ArduinoInterface.move_to(1, motor_move_position)
             ArduinoInterface.ArduinoInterface.move_to(2, motor_move_position)
     """
+
+    def should_kick(self, ball_coords):
+        player_zone = self.which_players_zone(ball_coords)
+
+        normalised_ball = ball_coords[1] - (player_zone * (self.width / 3))
+
+        first_player = self.maxcoords[1] * ArduinoInterface.ArduinoInterface.get_position(1) / 110
+        normalised_first_player = first_player - (player_zone * (self.maxcoords[1]/3))
+
+        second_player =self.maxcoords[1] * ArduinoInterface.ArduinoInterface.get_position(2) / 110
+        normalised_second_player = second_player - (player_zone * (self.maxcoords[1]/3))
+
+        # if ball is in front of first players
+        if ball_coords[0] > self.first_row_x:
+            if 0 <= (normalised_ball - normalised_first_player) < self.KICKING_RANGE:
+                ArduinoInterface.ArduinoInterface.kick(1)
+
+        #if ball is in front of second players
+        if ball_coords[0] > self.second_row_x:
+            if 0 <= (normalised_ball - normalised_second_player) < self.KICKING_RANGE:
+                ArduinoInterface.ArduinoInterface.kick(2)
+
+    def players_horizontal_or_vertical(self,ball_position):
+        ball_y_pos = ball_position[1]
+
+        if ball_y_pos < self.first_row_x:
+            if not self.first_row_horizontal:
+                ArduinoInterface.ArduinoInterface.go_horizontal(1)
+                self.first_row_horizontal = True
+        elif self.first_row_horizontal:
+            ArduinoInterface.ArduinoInterface.go_vertical(1)
+            self.first_row_horizontal = False
+
+        if ball_y_pos < self.second_row_x:
+            if not self.second_row_horizontal:
+                ArduinoInterface.ArduinoInterface.go_horizontal(2)
+                self.second_row_horizontal = True
+        elif self.second_row_horizontal:
+            ArduinoInterface.ArduinoInterface.go_vertical(2)
+            self.second_row_horizontal = False
         
     # Returns: (boolean, boolean) the bools represent if the ball is behind the first players and second players
     # respectively.
