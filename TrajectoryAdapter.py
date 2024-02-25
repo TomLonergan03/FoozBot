@@ -82,7 +82,7 @@ class Model:
 
 
 class TrajectoryAdapter:
-    def __init__(self, player_row_1, player_row_2):
+    def __init__(self, player_row_1 : float, player_row_2 : float):
         self.player_row_1 = player_row_1
         self.player_row_2 = player_row_2
 
@@ -105,11 +105,11 @@ class TrajectoryAdapter:
             pos_1 = path.locations[i]
             pos_2 = path.locations[j]
 
-            if (pos_1.y <= self.player_row_1 <= pos_2.y) or (pos_1.y >= self.player_row_1 >= pos_2.y):
-                player_intersections[0] = pos_1.x
+            if (pos_1.x <= self.player_row_1 <= pos_2.x) or (pos_1.x >= self.player_row_1 >= pos_2.x):
+                player_intersections[0] = pos_1.y
 
-            if (pos_1.y <= self.player_row_2 <= pos_2.y) or (pos_1.y >= self.player_row_2 >= pos_2.y):
-                player_intersections[1] = pos_1.x
+            if (pos_1.x <= self.player_row_2 <= pos_2.x) or (pos_1.x >= self.player_row_2 >= pos_2.x):
+                player_intersections[1] = pos_1.y
         return player_intersections
 
 if __name__ == '__main__':
