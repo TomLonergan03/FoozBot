@@ -32,8 +32,14 @@ def canny_edge(frame):
     # Converting the frame to gray scale and applying Canny edge detection
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    edges = cv2.Canny(blurred, 130, 150)
+    edges = cv2.Canny(blurred, 198, 200)
     return blurred, edges
+
+# Function to map ball position to normalized table coordinates
+def map_to_normalized_coordinates(x, y, top_left, bottom_right):
+    normalized_x = (x - top_left[0]) / (bottom_right[0] - top_left[0])
+    normalized_y = (y - top_left[1]) / (bottom_right[1] - top_left[1])
+    return normalized_x, normalized_y
 
 # if a video path was not supplied, grab the reference to the webcam
 if not args.get("video", False):
@@ -74,10 +80,15 @@ while True:
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-		print(center)
+		# only proceed if the radius meets a minimum size
+		# When the ball is detected, draw a circle around it and a line tracing its path
+		# Also, print the normalized coordinates of the ball with respect to the table
 		if radius > 10:
 			cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
 			cv2.circle(frame, center, 5, (0, 0, 255), -1)
+			normalized_coords = map_to_normalized_coordinates(center[0], center[1], top_left, bottom_right)
+			print("Ball's normalised coordinates",normalized_coords)
+   
 	pts.appendleft(center)
 	for i in range(1, len(pts)):
 		if pts[i - 1] is None or pts[i] is None:
