@@ -1,7 +1,9 @@
-from collections import deque
-import cv2
-import pandas as pd
 from model import Model, Location, Trajectory
+import pandas as pd
+import cv2
+from collections import deque
+from copy import deepcopy
+
 
 ball_location = [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
                  None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
@@ -29,10 +31,10 @@ FRICTION = 0.05
 FRICTION_LIMIT = 0
 ATTRACTION_MIN_SPEED = 0
 
-CALCULATE_AVG = True
+CALCULATE_AVG = False
 
 model = Model(Location(0, 0, 0), FRICTION, ATTRACTION_FORCE_X,
-              ATTRACTION_FORCE_Y, 92, 41, 1190, 614, iterations=1000,
+              ATTRACTION_FORCE_Y, 92, 41, 1190, 614, iterations=20,
               friction_limit=FRICTION_LIMIT, attraction_min_speed=ATTRACTION_MIN_SPEED)
 
 
@@ -73,11 +75,46 @@ def process_frame(frame, location, frame_number):
 
 for i in range(int(video.get(cv2.CAP_PROP_FRAME_WIDTH))):
     ret, frame = video.read()
-    if not ret:
+    if i == 85:
         break
-    process_frame(frame, ball_location[i], i)
-    if cv2.waitKey(33) & 0xFF == ord('q'):
-        break
+
+
+cv2.createTrackbar("ATTRACTION_FORCE_X", "Video", 1, 100, lambda x: None)
+cv2.createTrackbar("ATTRACTION_FORCE_Y", "Video", 10, 100, lambda x: None)
+cv2.createTrackbar("FRICTION", "Video", 5, 100, lambda x: None)
+cv2.createTrackbar("FRICTION_LIMIT", "Video", 0, 100, lambda x: None)
+cv2.createTrackbar("ATTRACTION_MIN_SPEED", "Video", 0, 100, lambda x: None)
+
+history = deque([Location(x=735.6293778215095, y=506.8194098974294, time=79),
+                 Location(x=769.5864975316671, y=503.2721885544023, time=80)], maxlen=2)
+
+
+while True:
+    ret, frame = video.read()
+    raw_frame = frame
+    raw_model = deepcopy(model)
+    i += 1
+    while True:
+        frame = deepcopy(raw_frame)
+        model = deepcopy(raw_model)
+        model.atraction_force_x = cv2.getTrackbarPos(
+            "ATTRACTION_FORCE_X", "Video") / 1000000
+        model.atraction_force_y = cv2.getTrackbarPos(
+            "ATTRACTION_FORCE_Y", "Video") / 1000000
+        model.friction = 1 - cv2.getTrackbarPos("FRICTION", "Video") / 1000
+        model.friction_limit = cv2.getTrackbarPos(
+            "FRICTION_LIMIT", "Video") / 100
+        model.attraction_min_speed = cv2.getTrackbarPos(
+            "ATTRACTION_MIN_SPEED", "Video") / 100
+        process_frame(frame, ball_location[i], i)
+        cv2.imshow("Video", frame)
+        key = cv2.waitKey(1)
+        if key == ord('q'):
+            video.release()
+            out.release()
+            exit()
+        elif key == ord('n'):
+            break
 
 video.release()
 out.release()

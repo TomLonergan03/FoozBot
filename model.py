@@ -52,11 +52,12 @@ class Model:
     def update(self, location: Location) -> Trajectory:
         self.history.append(
             Location((location.x + self.prediction.x)/2, (location.y + self.prediction.y)/2, location.time))
+        # self.history.append(location)
         future = []
         future.extend(self.history)
         for _ in range(self.iterations):
             future.append(self.calculateFutureLocation(
-                future, 0.1))
+                future, 1))
         self.prediction = future[2]
         return Trajectory([location] + future[2:])
 
@@ -71,12 +72,12 @@ class Model:
                                        self.board_min_x) / 2) ** 2 * self.x_attraction_force
         if abs(dy) > self.attraction_min_speed:
             dy -= (trajectory[-1].y - (self.board_max_y -
-                   self.board_min_y) / 2) ** 2 * self.y_attraction_force
+                                       self.board_min_y) / 2) * self.y_attraction_force
 
         # friction
-        if dx > self.friction_limit or dx < -self.friction_limit:
+        if abs(dx) > self.friction_limit:
             dx *= self.friction
-        if dy > self.friction_limit or dy < -self.friction_limit:
+        if abs(dy) > self.friction_limit:
             dy *= self.friction
 
         if trajectory[-1].x >= self.board_max_x or trajectory[-1].x <= self.board_min_x:
