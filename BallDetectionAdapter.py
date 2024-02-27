@@ -7,13 +7,14 @@ import cv2
 import imutils
 import time
 
+
 class Vision():
 
-    def __init__(self, ball_tail : int):
-        self.vs = VideoStream(src=0).start()
+    def __init__(self, ball_tail: int):
+        self.vs = VideoStream(src=4).start()
         # pts = deque(maxlen=args["buffer"])
         self.ball_tail_length = ball_tail
-        self.pts = deque(maxlen = ball_tail)
+        self.pts = deque(maxlen=ball_tail)
         # define the lower and upper boundaries of the "green"
         # ball in the HSV color space, then initialize the
         # list of tracked points
@@ -22,7 +23,8 @@ class Vision():
 
         # Input the edge detection here and pass into the lower 2 values
         self.topLeftCoord = (14, 30)
-        self.bottomRightCoord = (500, 400)   # If hardcoding, find correct values
+        # If hardcoding, find correct values
+        self.bottomRightCoord = (500, 400)
         self.framesPassed = 0
 
     # construct the argument parse and parse the arguments
@@ -45,17 +47,22 @@ class Vision():
     time.sleep(2.0)
     """
 
-    def normalise_coords(self, coord_x : float, coord_y : float):
+    def normalise_coords(self, coord_x: float, coord_y: float):
         """Takes input coordinates """
         temp_x = coord_x - self.topLeftCoord[0]
         temp_y = coord_y - self.topLeftCoord[1]
+        return (temp_x, temp_y)
+
+    def unnormalise_coords(self, coord_x: float, coord_y: float):
+        """Reverse of normalise_coords. Takes normalised coordinates"""
+        temp_x = coord_x + self.topLeftCoord[0]
+        temp_y = coord_y + self.topLeftCoord[1]
         return (temp_x, temp_y)
 
     def get_frame(self):
         # grab the current frame
         frame = self.vs.read()
         # handle the frame from VideoCapture or VideoStream
-        frame = frame[1] # if args.get("video", False) else frame
         # if we are viewing a video and we did not grab a frame,
         # then we have reached the end of the video
         if frame is None:
@@ -97,7 +104,7 @@ class Vision():
                 # draw the circle and centroid on the frame,
                 # then update the list of tracked points
                 cv2.circle(frame, (int(x), int(y)), int(radius),
-                        (0, 255, 255), 2)
+                           (0, 255, 255), 2)
                 cv2.circle(frame, center, 5, (0, 0, 255), -1)
         # update the points queue
         self.pts.appendleft(center)
@@ -110,17 +117,19 @@ class Vision():
                 continue
             # otherwise, compute the thickness of the line and
             # draw the connecting lines
-            thickness = int(np.sqrt(self.ball_tail_length / float(i + 1)) * 2.5)
-            cv2.line(frame, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
+            thickness = int(
+                np.sqrt(self.ball_tail_length / float(i + 1)) * 2.5)
+            cv2.line(frame, self.pts[i - 1],
+                     self.pts[i], (0, 0, 255), thickness)
         # show the frame to our screen
-        cv2.imshow("Frame", frame)
-        #key = cv2.waitKey(1) & 0xFF
+        # cv2.imshow("Frame", frame)
+        # key = cv2.waitKey(1) & 0xFF
 
         self.framesPassed += 1
-        return self.normalise_coords(*(x, y)), self.framesPassed
+        return self.normalise_coords(*(x, y)), self.framesPassed, frame
 
     def edge_detection():
-        #Do Edge detection
+        # Do Edge detection
         return
 
     def update(self):
