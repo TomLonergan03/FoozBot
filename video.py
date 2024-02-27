@@ -22,9 +22,6 @@ cv2.namedWindow("Video")
 def process_frame(frame, location, frame_number):
     cv2.putText(frame, f"Frame: {frame_number}", (10, 30),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-    for j in range(1, len(ball_location_cleaned)):
-        cv2.line(frame, ball_location_cleaned[j - 1],
-                 ball_location_cleaned[j], (255, 0, 0), 5)
     if location is not None:
         cv2.circle(frame, location, 5, (0, 0, 255), -1)
         trajectory = model.update(Location(
@@ -78,6 +75,9 @@ if __name__ == "__main__":
         ret, frame = video.read()
         if not ret:
             break
+        for j in range(1, len(ball_location_cleaned)):
+            cv2.line(frame, ball_location_cleaned[j - 1],
+                     ball_location_cleaned[j], (255, 0, 0), 5)
         process_frame(frame, ball_location[i], i)
         if cv2.waitKey(33) & 0xFF == ord('q'):
             break
