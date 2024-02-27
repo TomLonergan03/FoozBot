@@ -60,6 +60,10 @@ void resetLateral(){
   x = 110;
 }
 
+void sendPosition(){
+  Serial.println(x);
+}
+
 void moveTo(int position){
   //11/22
   //want the max rotation to be 110 steps
@@ -104,11 +108,11 @@ void printInt(int num){
 void loop() {
   //playerStepper.step(stepsPerRevolution/4);
   if (Serial.available()){
-    //reset the player position
-    basePosition();
     //read the input
     inputline = Serial.readStringUntil('\n');
 
+    //reset the player position
+    basePosition();
     //potential inputs:
     //player stand
     //player anticlockwise
@@ -117,15 +121,18 @@ void loop() {
     //player kick
     //if the begining of the input is "player" execute the player segment
     if(inputline.substring(0,6) == "player"){
+      //playerStepper.step(stepsPerRevolution);
       Serial.println("player mode babey");
-      Serial.println(inputline.substring(7));
+      //Serial.println(inputline.substring(7));
       command = inputline.substring(7);
       command.trim();
       if (command.equals("stand")){
+          Serial.println("stand");
           stand();
         }
       else if (command.equals("kick")){
           Serial.println("kick");
+          //Serial.println("kick");
           kick();
         }
       else if (command.equals("anticlockwise")){
@@ -133,52 +140,66 @@ void loop() {
           anticlockwise();
         }
       else if (command.equals("clockwise")){
+          Serial.println("clockwise");
           clockwise();
         }
       else if (command.equals("horizontal")){
+          Serial.println("horizontal");
           horizontal();
         } 
       //previous command helps the player fuctions with some logic stuff, keep it in.
       previousCommand = command;
-      }
+    }
 
     //potential inputs:
     //lateral reset
     //lateral in
     //lateral out
+    //lateral position
     //lateral *number between 0-110 inclusive*
     //if the begining of the input is "lateral" exeute the lateral segment
     else if (inputline.substring(0,7) == "lateral"){
+      //lateralStepper.step(stepsPerRevolution);
+      isInt = true;
       Serial.println("lateral mode");
-      Serial.println(inputline.substring(8));
+      //Serial.println(inputline.substring(8));
       movetype = inputline.substring(8);
       movetype.trim();
+
+      for(int i=0; i < movetype.length(); i++){
+        //Serial.println((isDigit(movetype.charAt(i))));
+        if(!(isDigit(movetype.charAt(i)))){
+          //Serial.println("not int");
+          isInt = false;
+        }
+      }
+      if(isInt){
+        Serial.println("move");
+        rotation = movetype.toInt();
+        moveTo(rotation);
+        }
       //if the rest of the input is "reset" do the reset
-      if(movetype == "reset"){
+      else if(movetype == "reset"){
+        Serial.println("reset");
         resetLateral();
         }
       //if the rest of the input is "in" move all the way in
       else if(movetype == "in"){
+        Serial.println("in");
         fullIn();
         }
       //if the rest of the input is "out" move all the way out
       else if(movetype == "out"){
         fullOut();
         }
+      
+      else if(movetype == "position"){
+        Serial.println("send pos");
+        sendPosition();
       }
-      //check if the remaining characters are all digits
-      for(int i=0; i < movetype.length(); i++){
-        if(!(isDigit(movetype.charAt(i)))){
-          isInt = false;
-        }
-      }
-      //if the remaing characters are digits then call the "moveTo" function with the provided number
-      if(isInt){
-        rotation = movetype.toInt();
-        moveTo(rotation);
-        }
-      }
+    }
   }
+}
   //Serial.println("counterclockwise");
   //myStepper.step(stepsPerRevolution);
   //delay(500);
