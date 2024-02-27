@@ -16,6 +16,9 @@ model = Model(Location(0, 0, 0), FRICTION, ATTRACTION_FORCE_X,
               friction_limit=FRICTION_LIMIT, attraction_min_speed=ATTRACTION_MIN_SPEED)
 
 
+cv2.namedWindow("Video")
+
+
 def process_frame(frame, location, frame_number):
     cv2.putText(frame, f"Frame: {frame_number}", (10, 30),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
@@ -67,7 +70,6 @@ if __name__ == "__main__":
 
     # import video
     video = cv2.VideoCapture("2024-02-22-113446.webm")
-    cv2.namedWindow("Video")
 
     out = cv2.VideoWriter("output.avi",
                           cv2.VideoWriter_fourcc(*"MJPG"), 30, (1280, 720))
