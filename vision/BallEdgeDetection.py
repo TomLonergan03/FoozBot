@@ -32,7 +32,7 @@ def canny_edge(frame):
     # Converting the frame to gray scale and applying Canny edge detection
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    edges = cv2.Canny(blurred, 198, 200)
+    edges = cv2.Canny(blurred, 198, 200, apertureSize=3, L2gradient=True)
     return blurred, edges
 
 # Function to map ball position to normalized table coordinates
