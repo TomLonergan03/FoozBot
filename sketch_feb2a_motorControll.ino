@@ -4,48 +4,64 @@ const int stepsPerRevolution = 200;  // change this to fit the number of steps p
 String command;
 String previousCommand;
 int angle = 0;
-int x = 0;
+int x = 0; //x is the lateral position of the motor
 int move;
 int step;
+String mode;
+String inputline;
+String movetype;
+bool isInt = true;
+int rotation;
 // for your motor
 
-// initialize the stepper library on pins 8 through 11:
-Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11);
+// initialize the stepper libraries for both motors.
+Stepper lateralStepper(stepsPerRevolution, 8, 9, 10, 11);
+Stepper playerStepper(stepsPerRevolution,2,3,4,5);
 
 void setup() {
   // set the speed at 60 rpm:
-  myStepper.setSpeed(100);
+  lateralStepper.setSpeed(40);
+  playerStepper.setSpeed(60);
   // initialize the serial port:
   Serial.begin(9600);
 }
 void kick(){
-    myStepper.step(stepsPerRevolution/4);
-    myStepper.step(-stepsPerRevolution/2);
-    myStepper.step(stepsPerRevolution/4);
+    playerStepper.step(stepsPerRevolution/4);
+    playerStepper.step(-stepsPerRevolution/2);
+    playerStepper.step(stepsPerRevolution/4);
 }
 
 void horizontal(){
-  myStepper.step(stepsPerRevolution/4);
+  playerStepper.step(stepsPerRevolution/4);
 }
 
 void clockwise(){
-  myStepper.step(-stepsPerRevolution);
+  playerStepper.step(-stepsPerRevolution);
 }
 
 void anticlockwise(){
-  myStepper.step(stepsPerRevolution);
+  playerStepper.step(stepsPerRevolution);
 }
 
 void stand(){
   if (previousCommand.equals("horizontal")){
-      myStepper.step(-stepsPerRevolution/4);
+      playerStepper.step(-stepsPerRevolution/4);
     }
 }
 
 void basePosition(){
   if(previousCommand.equals("horizontal") && !command.equals("stand")){
-    myStepper.step(-stepsPerRevolution/4);
+    playerStepper.step(-stepsPerRevolution/4);
   }
+}
+
+void resetLateral(){
+  lateralStepper.step(-1.5*stepsPerRevolution);
+  x = 110;
+}
+
+void sendPosition(){
+  Serial.println(x);
 }
 
 void moveTo(int position){
@@ -58,13 +74,13 @@ void moveTo(int position){
   if(position > x){
     //move in the positive direction
     step = position - x;
-    myStepper.step(-step);
+    lateralStepper.step(-step);
     x = position;
   }
   else if (position < x){
     //move in the negative direction
     step = x - position;
-    myStepper.step(step);
+    lateralStepper.step(step);
     x = position;
   }
   else if (position == x){
@@ -90,36 +106,99 @@ void printInt(int num){
 
 // Main system loop
 void loop() {
+  //playerStepper.step(stepsPerRevolution/4);
   if (Serial.available()){
-    //to switch between lateral and player movement just comment and un-comment the two below lines alternately.
-    command = Serial.readStringUntil('\n');
-    //move = Serial.parseInt();
-    command.trim();
+    //read the input
+    inputline = Serial.readStringUntil('\n');
+
+    //reset the player position
     basePosition();
-
-    if (command.equals("stand")){
-        stand();
-      }
-    else if (command.equals("anticlockwise")){
-        anticlockwise();
-      }
-    else if (command.equals("clockwise")){
-        clockwise();
-      }
-    else if (command.equals("horizontal")){
-        horizontal();
-      }
-    else if (command.equals("kick")){
-        kick();
-      }
-    else{
-      moveTo(move);
-
+    //potential inputs:
+    //player stand
+    //player anticlockwise
+    //player clockwise
+    //player horizontal
+    //player kick
+    //if the begining of the input is "player" execute the player segment
+    if(inputline.substring(0,6) == "player"){
+      //playerStepper.step(stepsPerRevolution);
+      Serial.println("player mode babey");
+      //Serial.println(inputline.substring(7));
+      command = inputline.substring(7);
+      command.trim();
+      if (command.equals("stand")){
+          Serial.println("stand");
+          stand();
+        }
+      else if (command.equals("kick")){
+          Serial.println("kick");
+          //Serial.println("kick");
+          kick();
+        }
+      else if (command.equals("anticlockwise")){
+          Serial.println("anticlockwise");
+          anticlockwise();
+        }
+      else if (command.equals("clockwise")){
+          Serial.println("clockwise");
+          clockwise();
+        }
+      else if (command.equals("horizontal")){
+          Serial.println("horizontal");
+          horizontal();
+        } 
+      //previous command helps the player fuctions with some logic stuff, keep it in.
+      previousCommand = command;
     }
-    previousCommand = command;
 
-  
-}
+    //potential inputs:
+    //lateral reset
+    //lateral in
+    //lateral out
+    //lateral position
+    //lateral *number between 0-110 inclusive*
+    //if the begining of the input is "lateral" exeute the lateral segment
+    else if (inputline.substring(0,7) == "lateral"){
+      //lateralStepper.step(stepsPerRevolution);
+      isInt = true;
+      Serial.println("lateral mode");
+      //Serial.println(inputline.substring(8));
+      movetype = inputline.substring(8);
+      movetype.trim();
+
+      for(int i=0; i < movetype.length(); i++){
+        //Serial.println((isDigit(movetype.charAt(i))));
+        if(!(isDigit(movetype.charAt(i)))){
+          //Serial.println("not int");
+          isInt = false;
+        }
+      }
+      if(isInt){
+        Serial.println("move");
+        rotation = movetype.toInt();
+        moveTo(rotation);
+        }
+      //if the rest of the input is "reset" do the reset
+      else if(movetype == "reset"){
+        Serial.println("reset");
+        resetLateral();
+        }
+      //if the rest of the input is "in" move all the way in
+      else if(movetype == "in"){
+        Serial.println("in");
+        fullIn();
+        }
+      //if the rest of the input is "out" move all the way out
+      else if(movetype == "out"){
+        fullOut();
+        }
+      
+      else if(movetype == "position"){
+        Serial.println("send pos");
+        sendPosition();
+      }
+    }
+  }
 }
   //Serial.println("counterclockwise");
   //myStepper.step(stepsPerRevolution);
