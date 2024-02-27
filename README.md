@@ -10,4 +10,9 @@ How to run:
 6. ./vendor/bin/sail up
 7. (first time)./vendor/bin/sail npm install 
 8. (Every time) ./vendor/bin/sail npm run dev
-9. 
+9. Connect on LocalHost.
+
+To run on LAN, run:
+  - ./vendor/bin/sail npm run build
+  - ./vendor/bin/sail artisan serve --host=0.0.0.0
+  - Connect via host machines local IP.
