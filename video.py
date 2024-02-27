@@ -25,14 +25,14 @@ out = cv2.VideoWriter("output.avi",
 
 ATTRACTION_FORCE_X = 0.000001
 ATTRACTION_FORCE_Y = 0.00001
-FRICTION = 0.05
+FRICTION = 0.01
 FRICTION_LIMIT = 0
 ATTRACTION_MIN_SPEED = 0
 
 CALCULATE_AVG = True
 
 model = Model(Location(0, 0, 0), FRICTION, ATTRACTION_FORCE_X,
-              ATTRACTION_FORCE_Y, 92, 41, 1190, 614, iterations=1000,
+              ATTRACTION_FORCE_Y, 92, 41, 1190, 614, iterations=20,
               friction_limit=FRICTION_LIMIT, attraction_min_speed=ATTRACTION_MIN_SPEED)
 
 
