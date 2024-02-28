@@ -23,8 +23,8 @@ futures = deque(maxlen=10)
 
 cv2.namedWindow("Video")
 
-out = cv2.VideoWriter("output.avi",
-                      cv2.VideoWriter_fourcc(*"MJPG"), 30, (1280, 720))
+# out = cv2.VideoWriter("output.avi",
+#                       cv2.VideoWriter_fourcc(*"MJPG"), 30, (1280, 720))
 
 
 def process_frame(frame, location, frame_number):
@@ -56,7 +56,7 @@ def process_frame(frame, location, frame_number):
         for frame_number in range(1, len(avg)):
             cv2.line(frame, (int(avg[frame_number-1].x), int(avg[frame_number-1].y)),
                      (int(avg[frame_number].x), int(avg[frame_number].y)), (0, 255, 0), 2)
-    out.write(frame.astype('uint8'))
+    # out.write(frame.astype('uint8'))
     cv2.imshow("Video", frame)
 
 

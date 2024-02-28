@@ -19,17 +19,14 @@ SECOND_PLAYER_ROW = 10
 # player_controller = PlayerController.PlayerController(
 #     table_bounds, ball_start_position, FIRST_PLAYER_ROW, SECOND_PLAYER_ROW, table_bounds)
 
-try:
-    while True:
-        stuff, bottom_right = vision.update()
-        location, frame_number, frame = stuff
-        location = vision.unnormalise_coords(location[0], location[1])
-        video.process_frame(frame, location, frame_number)
-        if cv2.waitKey(33) & 0xFF == ord('q'):
-            break
-        # new_player_row_intersections = trajectory_finder.get_new_intersections(ball_position)
+while True:
+    stuff, bottom_right = vision.update()
+    location, frame_number, frame = stuff
+    location = vision.unnormalise_coords(location[0], location[1])
+    video.process_frame(frame, location, frame_number)
+    if cv2.waitKey(33) & 0xFF == ord('q'):
+        break
+    # new_player_row_intersections = trajectory_finder.get_new_intersections(ball_position)
 
-        # # This handles player movement
-        # player_controller.update_ball_position(new_player_row_intersections)
-finally:
-    video.out.release()
+    # # This handles player movement
+    # player_controller.update_ball_position(new_player_row_intersections)

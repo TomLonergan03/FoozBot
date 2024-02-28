@@ -100,12 +100,14 @@ class Vision():
             center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
             # only proceed if the radius meets a minimum size
-            if radius > 10:
+            if radius > 5:
                 # draw the circle and centroid on the frame,
                 # then update the list of tracked points
                 cv2.circle(frame, (int(x), int(y)), int(radius),
                            (0, 255, 255), 2)
                 cv2.circle(frame, center, 5, (0, 0, 255), -1)
+        else:
+            (x, y) = (0, 0)
         # update the points queue
         self.pts.appendleft(center)
 
@@ -126,7 +128,7 @@ class Vision():
         # key = cv2.waitKey(1) & 0xFF
 
         self.framesPassed += 1
-        return self.normalise_coords(*(x, y)), self.framesPassed, frame
+        return self.normalise_coords(x, y), self.framesPassed, frame
 
     def edge_detection():
         # Do Edge detection
