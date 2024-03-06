@@ -1,9 +1,24 @@
 ##reference https://makersportal.com/blog/distance-detection-with-the-tf-luna-lidar-and-raspberry-pi
 
+######################################################
+# Copyright (c) 2021 Maker Portal LLC
+# Author: Joshua Hrisko
+######################################################
+#
+# TF-Luna Mini LiDAR wired to a Raspberry Pi via UART
+# --- Real-time ranging with signal strength indicator
+#
+#
+######################################################
+#
 import serial,time
 import numpy as np
 import matplotlib.pyplot as plt
-
+#
+############################
+# Serial Functions
+############################
+#
 def read_tfluna_data():
     while True:
         counter = ser.in_waiting # count the number of bytes waiting to be read
@@ -66,7 +81,7 @@ def set_baudrate(baud_indx=4):
     time.sleep(0.1) # wait to settle
     prev_ser.close() # close old serial port
     time.sleep(0.1) # wait to settle
-    ser_new =serial.Serial("/dev/tty1", baudrates[baud_indx],timeout=0) # new serial device
+    ser_new =serial.Serial("/dev/serial0", baudrates[baud_indx],timeout=0) # new serial device
     if ser_new.isOpen() == False:
         ser_new.open() # open serial port if not open
     bytes_to_read = 8
@@ -96,7 +111,7 @@ def set_baudrate(baud_indx=4):
 #
 baudrates = [9600,19200,38400,57600,115200,230400,460800,921600] # baud rates
 prev_indx = 4 # previous baud rate index (current TF-Luna baudrate)
-prev_ser = serial.Serial("/dev/tty1", baudrates[prev_indx],timeout=0) # mini UART serial device
+prev_ser = serial.Serial("/dev/serial0", baudrates[prev_indx],timeout=0) # mini UART serial device
 if prev_ser.isOpen() == False:
     prev_ser.open() # open serial port if not open
 baud_indx = 4 # baud rate to be changed to (new baudrate for TF-Luna)
