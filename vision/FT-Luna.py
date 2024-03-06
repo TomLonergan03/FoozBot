@@ -1,18 +1,6 @@
 import serial
 
-ser = serial.Serial("/dev/ttyUSB0", 115200) #might not be this port, need to be changed, find serial port path
-
-
-if _name_ == "main":
-    try:
-        if ser.isOpen() == False:
-            ser.open()
-        read_data()
-    except KeyboardInterrupt():
-        if ser != None:
-            ser.close()
-            print ("program is interrupted by user")
-
+ser = serial.Serial("/dev/tty1", 115200) #might not be this port, need to be changed, find serial port path
 def read_data():
     while True:
         counter = ser.in_waiting #count the number of bytes of the serial port
@@ -31,4 +19,16 @@ def read_data():
                 if temperature!= 0:
                     print("Chip Temperature:"+str(temperature))
                 ser.reset_input_buffer()
+
+if __name__ == "__main__":
+    try:
+        if ser.isOpen() == False:
+            ser.open()
+        read_data()
+    except KeyboardInterrupt():
+        if ser != None:
+            ser.close()
+            print ("program is interrupted by user")
+
+
             
