@@ -1,6 +1,6 @@
 import serial
 
-ser = serial.Serial("/dev/tty1", 115200) #might not be this port, need to be changed, find serial port path
+ser = serial.Serial("/dev/ttyS0", 115200) #might not be this port, need to be changed, find serial port path
 def read_data():
     while True:
         counter = ser.in_waiting #count the number of bytes of the serial port
