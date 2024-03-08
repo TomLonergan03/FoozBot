@@ -1,4 +1,3 @@
-# import the necessary packages
 from collections import deque
 from imutils.video import VideoStream
 import numpy as np
@@ -6,122 +5,106 @@ import argparse
 import cv2
 import imutils
 import time
+import warnings
+import os
 
-class Vision():
 
-    def __init__(self, ball_tail : int):
-        self.vs = VideoStream(src=0).start()
-        # pts = deque(maxlen=args["buffer"])
-        self.ball_tail_length = ball_tail
-        self.pts = deque(maxlen = ball_tail)
-        # define the lower and upper boundaries of the "green"
-        # ball in the HSV color space, then initialize the
-        # list of tracked points
-        self.ballLower = (0, 134, 199)
-        self.ballUpper = (30, 255, 255)
+class BallEdgeDetection():
+    def __init__(self):
+        self.greenLower = (0, 134, 199)
+        self.greenUpper = (30, 255, 255)
+        self.pts = deque(maxlen=10)
 
-        # Input the edge detection here and pass into the lower 2 values
-        self.topLeftCoord = (14, 30)
-        self.bottomRightCoord = (500, 400)   # If hardcoding, find correct values
-        self.framesPassed = 0
+        # Load the template for edge detection
+        self.temp_edges = cv2.imread("Images/TemplateNewCropped360x240.jpg", cv2.IMREAD_GRAYSCALE)
+        assert self.temp_edges is not None, "file could not be read, check with os.path.exists()"
+        w, h = self.temp_edges.shape[::-1]
+        self.w = w
+        self.h = h
 
-    # construct the argument parse and parse the arguments
-    """
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-v", "--video",
-                    help="path to the (optional) video file")
-    ap.add_argument("-b", "--buffer", type=int, default=64,
-                    help="max buffer size")
-    args = vars(ap.parse_args())
 
-    # if a video path was not supplied, grab the reference
-    # to the webcam
-    if not args.get("video", False):
-        vs = VideoStream(src=0).start()
-    # otherwise, grab a reference to the video file
-    else:
-        vs = cv2.VideoCapture(args["video"])
-    # allow the camera or video file to warm up
-    time.sleep(2.0)
-    """
+        # if a video path was not supplied, grab the reference to the webcam
+        self.vs = VideoStream(src=4).start()
+        self.frame = self.vs.read()
 
-    def normalise_coords(self, coord_x : float, coord_y : float):
-        """Takes input coordinates """
-        temp_x = coord_x - self.topLeftCoord[0]
-        temp_y = coord_y - self.topLeftCoord[1]
-        return (temp_x, temp_y)
+        time.sleep(2.0)
 
-    def get_frame(self):
+    def get_ball_position(self, display):
         # grab the current frame
-        frame = self.vs.read()
+        self.frame = self.vs.read()
         # handle the frame from VideoCapture or VideoStream
-        frame = frame[1] # if args.get("video", False) else frame
+
+        # frame = frame[1] if args.get("video", False) else frame
+
         # if we are viewing a video and we did not grab a frame,
         # then we have reached the end of the video
-        if frame is None:
+        if self.frame is None:
             return
-        # resize the frame, blur it, and convert it to the HSV
-        # color space
-        frame = imutils.resize(frame, width=640)
-        return frame
+        # Apply Canny edge detection and template matching
+        self.frame = imutils.resize(self.frame, width=360, height=240)
 
-    def get_ball_position(self):
-        frame = self.get_frame()
-        blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-        # construct a mask for the color "green", then perform
-        # a series of dilations and erosions to remove any small
-        # blobs left in the mask
-        mask = cv2.inRange(hsv, self.ballLower, self.ballUpper)
+
+
+        # Tracking green ball
+        mask = cv2.inRange(
+            cv2.cvtColor(cv2.GaussianBlur(imutils.resize(self.frame, width=360, height=240), (11, 11), 0), cv2.COLOR_BGR2HSV),
+            self.greenLower, self.greenUpper)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
-
-        # find contours in the mask and initialize the current
-        # (x, y) center of the ball
-        cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-                                cv2.CHAIN_APPROX_SIMPLE)
-        cnts = imutils.grab_contours(cnts)
+        cnts = imutils.grab_contours(cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE))
         center = None
-        # only proceed if at least one contour was found
         if len(cnts) > 0:
-            # find the largest contour in the mask, then use
-            # it to compute the minimum enclosing circle and
-            # centroid
             c = max(cnts, key=cv2.contourArea)
             ((x, y), radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
             center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-
-            # only proceed if the radius meets a minimum size
             if radius > 10:
-                # draw the circle and centroid on the frame,
-                # then update the list of tracked points
-                cv2.circle(frame, (int(x), int(y)), int(radius),
-                        (0, 255, 255), 2)
-                cv2.circle(frame, center, 5, (0, 0, 255), -1)
-        # update the points queue
+                cv2.circle(self.frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
+                cv2.circle(self.frame, center, 5, (0, 0, 255), -1)
         self.pts.appendleft(center)
-
-        # loop over the set of tracked points
         for i in range(1, len(self.pts)):
-            # if either of the tracked points are None, ignore
-            # them
             if self.pts[i - 1] is None or self.pts[i] is None:
                 continue
-            # otherwise, compute the thickness of the line and
-            # draw the connecting lines
-            thickness = int(np.sqrt(self.ball_tail_length / float(i + 1)) * 2.5)
-            cv2.line(frame, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
-        # show the frame to our screen
-        cv2.imshow("Frame", frame)
-        #key = cv2.waitKey(1) & 0xFF
+            thickness = int(np.sqrt(10 / float(i + 1)) * 2.5)
+            cv2.line(self.frame, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
 
-        self.framesPassed += 1
-        return self.normalise_coords(*(x, y)), self.framesPassed
+        # Show the frame and the edges
+        if display:
+            cv2.imshow("Frame", self.frame)
+        #  cv2.imshow('Canny Edge Detection', edges_frame)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            return
 
-    def edge_detection():
-        #Do Edge detection
-        return
+        return center
 
-    def update(self):
-        return self.get_ball_position(), self.normalise_coords(*self.bottomRightCoord)
+    def get_bottom_right(self, display):
+        self.frame = self.vs.read()
+        self.frame = imutils.resize(self.frame, width=360, height=240)
+        blurred_frame, edges_frame = self.canny_edge(self.frame)
+        res = cv2.matchTemplate(edges_frame, self.temp_edges, cv2.TM_CCORR_NORMED)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        top_left = max_loc  # Using max_loc for CCoRR
+        bottom_right = (top_left[0] + self.w - 5, top_left[1] + self.h - 5)
+        cv2.rectangle(self.frame, top_left, bottom_right, (255, 0, 0), 2)
+
+        if display:
+            cv2.imshow("Frame",self.frame)
+
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            return
+        return bottom_right
+
+    def canny_edge(self,frame):
+        # Converting the frame to gray scale and applying Canny edge detection
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
+        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+        edges = cv2.Canny(blurred, 130, 150)
+        return blurred, edges
+
+be = BallEdgeDetection()
+while True:
+    ball_position = be.get_ball_position(display=True)
+    bottom_right = be.get_bottom_right(display=True)
+    print("Ball position: " + str(ball_position) + "   " + str("Bottom right: " + str(bottom_right)))
