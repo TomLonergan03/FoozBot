@@ -26,6 +26,8 @@ class BallEdgeDetection():
         self.vs = VideoStream(src=src).start()
         self.frame = self.vs.read()
 
+        self.top_left_bottom_right = self.get_top_left_bottom_right()
+
         time.sleep(2.0)
 
     def get_ball_position(self):
@@ -90,9 +92,8 @@ class BallEdgeDetection():
         frame = imutils.resize(frame, width=360, height=240)
 
         # DISPLAY BOARD
-        top_left_bottom_right = self.get_top_left_bottom_right()
-        top_left = top_left_bottom_right[0]
-        bottom_right = top_left_bottom_right[1]
+        top_left = self.top_left_bottom_right[0]
+        bottom_right = self.top_left_bottom_right[1]
         cv2.rectangle(frame, top_left, bottom_right, (255, 0, 0), 2)
 
         # DISPLAY TRAIL

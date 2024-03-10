@@ -18,7 +18,7 @@ class Trajectory:
     locations: List[Location]
 
 
-def display_trajectory(image, trajectory: Trajectory, color=(0, 0, 255)):
+def draw_on_frame(image, trajectory: Trajectory, color=(0, 0, 255)):
     for i in range(1, len(trajectory.locations)):
         cv2.line(image, (int(trajectory.locations[i - 1].x), int(trajectory.locations[i - 1].y)),
                  (int(trajectory.locations[i].x), int(trajectory.locations[i].y)), color, 2)
@@ -51,7 +51,7 @@ class Model:
         self.history.append(location)
         future = []
         future.extend(self.history)
-        for i in range(50):
+        for i in range(10):
             future.append(self.calculateFutureLocation(
                 future, 0.1))
         return Trajectory([location] + future[2:])
