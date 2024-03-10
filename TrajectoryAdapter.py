@@ -51,14 +51,23 @@ class Model:
         self.history.append(location)
         future = []
         future.extend(self.history)
-        for i in range(200):
+        for i in range(50):
             future.append(self.calculateFutureLocation(
                 future, 0.1))
         return Trajectory([location] + future[2:])
 
     def calculateFutureLocation(self, trajectory: Trajectory, time: float) -> Location:
+        if trajectory[-1] is None or trajectory[-2] is None:
+            return Location(0.1,0.1,time)
+
+        if (trajectory[-1].time - trajectory[-2].time) == 0:
+            trajectory[-1].time += 0.0000001
+
         dx = (trajectory[-1].x - trajectory[-2].x) / \
              (trajectory[-1].time - trajectory[-2].time)
+
+        if (trajectory[-1].time - trajectory[-2].time):
+            trajectory[-1].time += 0.0000001
         dy = (trajectory[-1].y - trajectory[-2].y) / \
              (trajectory[-1].time - trajectory[-2].time)
 
