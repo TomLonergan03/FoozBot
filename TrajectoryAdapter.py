@@ -2,7 +2,6 @@ from collections import deque
 from dataclasses import dataclass
 from typing import List
 
-import numpy as np
 import cv2
 
 
@@ -18,29 +17,13 @@ class Trajectory:
     locations: List[Location]
 
 
-def draw_on_frame(image, trajectory: Trajectory, color=(0, 0, 255)):
-    if len(trajectory.locations) == 0:
-        return
-
-    for i in range(1, len(trajectory.locations)):
-        cv2.line(image, (int(trajectory.locations[i - 1].x), int(trajectory.locations[i - 1].y)),
-                 (int(trajectory.locations[i].x), int(trajectory.locations[i].y)), color, 2)
-
-
-KNOWN_LOCATIONS = [Location(110, 120, 1),
-                   Location(120, 125, 2),
-                   Location(130, 130, 3),
-                   Location(140, 132, 4),
-                   Location(150, 134, 5),
-                   Location(160, 135, 6),
-                   Location(170, 130, 7), ]
 
 
 class Model:
     def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0,
-                 y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 200,
+                 y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 321,
                  board_max_y: int = 200):
-        self.history = deque(maxlen=2)
+        self.history = deque(maxlen=10)
         self.history.append(initial_pos)
         self.friction = 1 - friction
         self.x_attraction_force = x_attraction_force
@@ -57,13 +40,15 @@ class Model:
         future = []
         future.extend(self.history)
         for i in range(10):
-            future.append(self.calculateFutureLocation(
-                future, 0.1))
+            future_location = self.calculateFutureLocation(
+                future, 0.1)
+            if future_location is not None:
+                future.append(future_location)
         return Trajectory([location] + future[2:])
 
     def calculateFutureLocation(self, trajectory: Trajectory, time: float) -> Location:
         if trajectory[-1] is None or trajectory[-2] is None:
-            return Location(0.1,0.1,time)
+            return None
 
         if (trajectory[-1].time - trajectory[-2].time) == 0:
             trajectory[-1].time += 0.0000001
@@ -102,17 +87,11 @@ class TrajectoryAdapter:
 
         ATTRACTION_FORCE = 0.00008
         FRICTION = 0.01
-        self.model = Model(KNOWN_LOCATIONS[0], FRICTION,
+        self.model = Model(Location(0, 0, 0), FRICTION,
                            ATTRACTION_FORCE, ATTRACTION_FORCE)
         self.i = 1
 
         self.current_predicted_path = Trajectory([Location(0,0,0)])
-
-
-        """    def update_prediction(self, last_known_position):
-        predicted_path = self.model.update(last_known_position)
-        self.current_predicted_path = predicted_path
-        return predicted_path"""
 
     def get_new_intersections(self, last_known_position):
         path = self.model.update(last_known_position)
@@ -132,21 +111,11 @@ class TrajectoryAdapter:
                 player_intersections[1] = pos_1.y
         return player_intersections
 
-if __name__ == '__main__':
-    ta = TrajectoryAdapter(50, 80)
+    def draw_trajectory_on_frame(self,image, trajectory: Trajectory, color=(0, 0, 255)):
+        if len(trajectory.locations) == 0:
+            return
 
-    KNOWN_LOCATIONS = [Location(60, 60, 1),
-                       Location(70, 70, 2),
-
-        Location(110, 120, 1),
-                       Location(120, 125, 2),
-                       Location(130, 130, 3),
-                       Location(140, 132, 4),
-                       Location(150, 134, 5),
-                       Location(160, 135, 6),
-                       Location(170, 130, 7),]
-
-    for i in range(1, len(KNOWN_LOCATIONS)):
-        print(ta.get_new_intersections(KNOWN_LOCATIONS[i]))
-
+        for i in range(1, len(trajectory.locations)):
+            cv2.line(image, (int(trajectory.locations[i - 1].x), int(trajectory.locations[i - 1].y)),
+                     (int(trajectory.locations[i].x), int(trajectory.locations[i].y)), color, 2)
 

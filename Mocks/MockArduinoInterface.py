@@ -14,7 +14,7 @@ class MockArduinoInterface():
         return None
 
     # TODO
-    def move_to(player, position):
+    def move_to(self, player, position):
         # need to implement
         return None
 
