@@ -19,6 +19,9 @@ class Trajectory:
 
 
 def draw_on_frame(image, trajectory: Trajectory, color=(0, 0, 255)):
+    if len(trajectory.locations) == 0:
+        return
+
     for i in range(1, len(trajectory.locations)):
         cv2.line(image, (int(trajectory.locations[i - 1].x), int(trajectory.locations[i - 1].y)),
                  (int(trajectory.locations[i].x), int(trajectory.locations[i].y)), color, 2)
@@ -46,6 +49,8 @@ class Model:
         self.board_max_y = board_max_y
         self.board_min_x = board_min_x
         self.board_min_y = board_min_y
+
+        self.current_prediction : Trajectory = Trajectory(Location(0, 0, 0))
 
     def update(self, location: Location) -> Trajectory:
         self.history.append(location)
@@ -101,11 +106,17 @@ class TrajectoryAdapter:
                            ATTRACTION_FORCE, ATTRACTION_FORCE)
         self.i = 1
 
-    def update_prediction(self, last_known_position):
-        return self.model.update(KNOWN_LOCATIONS[self.i])
+        self.current_predicted_path = Trajectory([Location(0,0,0)])
+
+
+        """    def update_prediction(self, last_known_position):
+        predicted_path = self.model.update(last_known_position)
+        self.current_predicted_path = predicted_path
+        return predicted_path"""
 
     def get_new_intersections(self, last_known_position):
         path = self.model.update(last_known_position)
+        self.current_predicted_path = path
 
         player_intersections = [None, None]
         for i in range(0, len(path.locations) - 1):

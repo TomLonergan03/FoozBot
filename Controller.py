@@ -1,13 +1,12 @@
+import time
+
 import cv2
-import numpy as np
 
 import BallDetectionAdapter
-from Mocks import MockArduinoInterface
 import PlayerController
 import TrajectoryAdapter
+from Mocks import MockArduinoInterface
 from TrajectoryAdapter import Location
-import time
-from TrajectoryAdapter import Trajectory
 
 trajectory_finder = TrajectoryAdapter.TrajectoryAdapter(5, 10)
 
@@ -37,20 +36,21 @@ player_controller = PlayerController.PlayerController(ball_vision.get_ball_posit
 
 future = []
 
+DISPLAY = True
+
 while True:
+
     ball_position = ball_vision.get_ball_position()
-
-    # new_player_row_intersections = trajectory_finder.get_new_intersections(ball_position)
-    # This handles player movement
-    player_controller.update_ball_position
-
-    frame = ball_vision.get_frame()
     if ball_position != None:
 
         ball_position_timestamp = Location(ball_position[0], ball_position[1], time.time() - start_time)
-        future = trajectory_model.update(ball_position_timestamp)
-        TrajectoryAdapter.draw_on_frame(frame, future)
+        new_player_row_intersections = trajectory_finder.get_new_intersections(ball_position_timestamp)
 
-    cv2.imshow("Frame", frame)
+        player_controller.update_ball_position(ball_position, new_player_row_intersections)
 
-    print("Ball position: " + str(ball_position) + "   " + str("Bottom right: " + str(bottom_right)))
+    if DISPLAY:
+        frame = ball_vision.get_frame()
+        TrajectoryAdapter.draw_on_frame(frame, trajectory_finder.current_predicted_path)
+        cv2.imshow("Frame", frame)
+        print(start_time - time.time())
+        print("Ball position: " + str(ball_position) + "   " + str("Bottom right: " + str(bottom_right)))
