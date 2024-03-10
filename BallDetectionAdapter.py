@@ -25,6 +25,7 @@ class BallEdgeDetection():
         # if a video path was not supplied, grab the reference to the webcam
         self.vs = VideoStream(src=src).start()
         self.frame = self.vs.read()
+        # self.frame_num = 0
 
         self.top_left_bottom_right = self.get_top_left_bottom_right()
 
@@ -33,6 +34,7 @@ class BallEdgeDetection():
     def get_ball_position(self):
         # grab the current frame
         self.frame = self.vs.read()
+        # self.frame_num += 1
         # handle the frame from VideoCapture or VideoStream
 
         # frame = frame[1] if args.get("video", False) else frame
@@ -78,7 +80,7 @@ class BallEdgeDetection():
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
             return
-        return (top_left, bottom_right)
+        return (top_left, bottom_right) # and self.frame_num if needed
 
     def canny_edge(self, frame):
         # Converting the frame to gray scale and applying Canny edge detection

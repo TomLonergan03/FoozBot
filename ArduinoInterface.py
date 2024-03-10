@@ -31,4 +31,4 @@ class ArduinoInterface:
         return None
 
     def close(self):
-        ser.close()
+        self.ser.close()
