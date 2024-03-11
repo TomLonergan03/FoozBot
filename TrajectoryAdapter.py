@@ -105,10 +105,13 @@ class TrajectoryAdapter:
             pos_2 = path.locations[j]
 
             if (pos_1.x <= self.player_row_1 <= pos_2.x) or (pos_1.x >= self.player_row_1 >= pos_2.x):
-                player_intersections[0] = pos_1.y
+                if player_intersections[0] is not None: # Only catch the first intersection with each row of players
+                    player_intersections[0] = pos_1.y 
+                # Find which direction the ball is going in?
 
             if (pos_1.x <= self.player_row_2 <= pos_2.x) or (pos_1.x >= self.player_row_2 >= pos_2.x):
-                player_intersections[1] = pos_1.y
+                if player_intersections[1] is not None:
+                    player_intersections[1] = pos_1.y
         return player_intersections
 
     def draw_trajectory_on_frame(self,image, trajectory: Trajectory, color=(0, 0, 255)):

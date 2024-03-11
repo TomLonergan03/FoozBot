@@ -29,16 +29,16 @@ player_controller = PlayerController.PlayerController(ball_vision.get_ball_posit
                                                       SECOND_PLAYER_ROW, bottom_right, arduino_interface)
 
 
-start_time = time.time()
+start_time = time.time()    # Can be exchanged for the vision controlled frame number 
 DISPLAY = True
 
 while True:
-
+    # Vision
     ball_position = ball_vision.get_ball_position()
     if ball_position is not None:
 
         # Trajectory Prediction
-        ball_position_timestamp = Location(ball_position[0], ball_position[1], time.time() - start_time)
+        ball_position_timestamp = Location(ball_position[0], ball_position[1], time.time() - start_time)    # can alternatively use frame number instead of time
         new_player_row_intersections = trajectory_finder.get_new_intersections(ball_position_timestamp)
 
         # PlayerControls
