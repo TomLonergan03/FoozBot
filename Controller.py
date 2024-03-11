@@ -7,8 +7,8 @@ from Mocks import MockArduinoInterface
 from TrajectoryAdapter import Location
 
 
-FIRST_PLAYER_ROW = 125
-SECOND_PLAYER_ROW = 260
+FIRST_PLAYER_ROW = 160
+SECOND_PLAYER_ROW = 280
 
 # PATH PREDICTION
 trajectory_finder = TrajectoryAdapter.TrajectoryAdapter(FIRST_PLAYER_ROW, SECOND_PLAYER_ROW)
@@ -20,7 +20,7 @@ This allows us to test the code when we don't have the arduino physically connec
 arduino_interface = MockArduinoInterface.MockArduinoInterface()
 
 # VISION
-ball_vision = BallDetectionAdapter.BallEdgeDetection(src=4)
+ball_vision = BallDetectionAdapter.BallEdgeDetection(src=1)
 bottom_right = ball_vision.get_top_left_bottom_right()[1]
 
 # PLAYER CONTROLS
@@ -50,3 +50,7 @@ while True:
         player_controller.draw_intersections_on_frame(image)
         cv2.imshow("System Visualisation", image)
         print("Ball position: " + str(ball_position) + "   " + str("Bottom right: " + str(bottom_right)))
+    
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("q"):
+        break

@@ -11,10 +11,12 @@ import os
 
 class BallEdgeDetection():
     def __init__(self, src):
-        self.greenLower = (0, 134, 199)
-        self.greenUpper = (30, 255, 255)
+        self.ballLower = (0, 134, 199)
+        self.ballUpper = (30, 255, 255)
         self.pts = deque(maxlen=10)
 
+        self.playersLower = (0, 0, 0)
+        self.playersUpper = (255, 255, 255)
         # Load the template for edge detection
         self.temp_edges = cv2.imread("Images/TemplateNewCropped360x240.jpg", cv2.IMREAD_GRAYSCALE)
         assert self.temp_edges is not None, "file could not be read, check with os.path.exists()"
@@ -50,7 +52,7 @@ class BallEdgeDetection():
         mask = cv2.inRange(
             cv2.cvtColor(cv2.GaussianBlur(imutils.resize(self.frame, width=360, height=240), (11, 11), 0),
                          cv2.COLOR_BGR2HSV),
-            self.greenLower, self.greenUpper)
+            self.ballLower, self.ballUpper)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
         cnts = imutils.grab_contours(cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE))
@@ -107,8 +109,8 @@ class BallEdgeDetection():
             thickness = int(np.sqrt(10 / float(i + 1)) * 2.5)
             cv2.line(frame, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
 
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord("q"):
-            return
+        #key = cv2.waitKey(1) & 0xFF
+        #if key == ord("q"):
+        #    return
 
         return frame
