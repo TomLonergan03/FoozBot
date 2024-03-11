@@ -17,18 +17,17 @@ class ArduinoInterface:
         self.ser.write(command.encode())
 
     def go_vertical(self, player):
-        self.send_command("stand")
+        self.send_command("player stand")
 
     def go_horizontal(self, player):
-        self.send_command("horizontal")
+        self.send_command("player horizontal")
 
     def kick(self, player):
-        self.send_command("kick")
+        self.send_command("player kick")
 
     # TODO
     def move_to(self, player,  position):
-        # need to implement
-        return None
+        self.send_command("lateral " + str(position))
 
     # TODO
     def get_position(self):

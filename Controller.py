@@ -6,13 +6,6 @@ import TrajectoryAdapter
 from Mocks import MockArduinoInterface
 from TrajectoryAdapter import Location
 
-
-FIRST_PLAYER_ROW = 160
-SECOND_PLAYER_ROW = 280
-
-# PATH PREDICTION
-trajectory_finder = TrajectoryAdapter.TrajectoryAdapter(FIRST_PLAYER_ROW, SECOND_PLAYER_ROW)
-
 # MOTOR INTERFACE
 """
 arduino_interface = ArduinoInterface.ArduinoInterface()
@@ -20,13 +13,23 @@ This allows us to test the code when we don't have the arduino physically connec
 arduino_interface = MockArduinoInterface.MockArduinoInterface()
 
 # VISION
-ball_vision = BallDetectionAdapter.BallEdgeDetection(src=1)
-bottom_right = ball_vision.get_top_left_bottom_right()[1]
+ball_vision = BallDetectionAdapter.BallEdgeDetection(src=0)
+top_left, bottom_right = ball_vision.get_top_left_bottom_right()
+temp = ball_vision.get_players_x()
+players_pos = temp[0]
+player_start = temp[1]
+assert players_pos != [], "Players row signifiers not found. Please check camera source or replace the blue tape."
+FIRST_PLAYER_ROW = players_pos[0]
+SECOND_PLAYER_ROW = players_pos[1]
+
+# PATH PREDICTION
+trajectory_finder = TrajectoryAdapter.TrajectoryAdapter(FIRST_PLAYER_ROW, SECOND_PLAYER_ROW)
+
 
 # PLAYER CONTROLS
 """The table is measured from the top left (0,0), we need the bottom right (x,y) to define the playing field"""
-player_controller = PlayerController.PlayerController(ball_vision.get_ball_position(), FIRST_PLAYER_ROW,
-                                                      SECOND_PLAYER_ROW, bottom_right, arduino_interface)
+player_controller = PlayerController.PlayerController(ball_vision.get_ball_position(), FIRST_PLAYER_ROW, player_start[0],
+                                                      SECOND_PLAYER_ROW, player_start[1], top_left, bottom_right, arduino_interface)
 
 
 start_time = time.time()    # Can be exchanged for the vision controlled frame number 

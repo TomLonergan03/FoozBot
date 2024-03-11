@@ -1,15 +1,15 @@
 import cv2
 
-
 class PlayerController:
 
-    def __init__(self, ball_coords: tuple[float, float], first_row_x, second_row_x, max_coords: tuple[float, float], arduino_interface):
+    def __init__(self, ball_coords: tuple[float, float], first_row_x, first_row_y, second_row_x, second_row_y, start_coords :tuple[float, float], max_coords: tuple[float, float], arduino_interface):
         self.ball_coords = ball_coords
 
         # These fields store the positions of the rows of players on the board
         # self.first_row_x = first_row_x
         # self.second_row_x = second_row_x
         self.player_row_x = [first_row_x, second_row_x]
+        self.player_row_bottom = [first_row_y, second_row_y]
 
         # Fields to tell us if the players are already in the process of kicking
         self.first_row_kicking = False
@@ -27,6 +27,7 @@ class PlayerController:
         self.second_row_horizontal = True
 
         # Maximum coordinates of the field
+        self.start_coords = start_coords
         self.max_coords = max_coords
         
         self.arduino_interface = arduino_interface
@@ -152,12 +153,13 @@ class PlayerController:
             return False
 
     def draw_intersections_on_frame(self, frame):
-        player_row_1 = self.player_row_x[0]
-        player_row_2 = self.player_row_x[1]
+        player_row_1 = int(self.player_row_x[0])
+        player_row_2 = int(self.player_row_x[1])
+        players_y_1 = int(self.player_row_bottom[0])
+        players_y_2 = int(self.player_row_bottom[1])
 
-
-        cv2.line(frame, (player_row_1,20), (player_row_1,200), color=(0,255,0), thickness=2)
-        cv2.line(frame, (player_row_2,20), (player_row_2,200), color=(0,255,0), thickness=2)
+        cv2.line(frame, (player_row_1, self.start_coords[1]), (player_row_1, players_y_1), color=(0,255,0), thickness=2)
+        cv2.line(frame, (player_row_2, self.start_coords[1]), (player_row_2, players_y_2), color=(0,255,0), thickness=2)
 
         if self.last_known_player_intersections[0] is not None:
             cv2.circle(frame, (player_row_1, int(self.last_known_player_intersections[0])), radius=5, color=(255, 255, 0), thickness=5)

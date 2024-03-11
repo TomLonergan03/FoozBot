@@ -15,8 +15,8 @@ class BallEdgeDetection():
         self.ballUpper = (30, 255, 255)
         self.pts = deque(maxlen=10)
 
-        self.playersLower = (0, 0, 0)
-        self.playersUpper = (255, 255, 255)
+        self.playersLower = (35, 80, 156)
+        self.playersUpper = (172, 184, 255)
         # Load the template for edge detection
         self.temp_edges = cv2.imread("Images/TemplateNewCropped360x240.jpg", cv2.IMREAD_GRAYSCALE)
         assert self.temp_edges is not None, "file could not be read, check with os.path.exists()"
@@ -72,17 +72,16 @@ class BallEdgeDetection():
     def get_top_left_bottom_right(self):
         self.frame = self.vs.read()
         self.frame = imutils.resize(self.frame, width=360, height=240)
-        blurred_frame, edges_frame = self.canny_edge(self.frame)
+        _, edges_frame = self.canny_edge(self.frame)
         res = cv2.matchTemplate(edges_frame, self.temp_edges, cv2.TM_CCORR_NORMED)
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        _, _, _, max_loc = cv2.minMaxLoc(res)
         top_left = max_loc  # Using max_loc for CCoRR
         bottom_right = (top_left[0] + self.w - 5, top_left[1] + self.h - 5)
-
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
             return
-        return (top_left, bottom_right) # and self.frame_num if needed
+        return (top_left, bottom_right)
 
     def canny_edge(self, frame):
         # Converting the frame to gray scale and applying Canny edge detection
@@ -90,6 +89,39 @@ class BallEdgeDetection():
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         edges = cv2.Canny(blurred, 130, 150)
         return blurred, edges
+
+    def get_players_x(self):
+        self.frame = self.vs.read()
+        if self.frame is None:
+            return
+
+        self.frame = imutils.resize(self.frame, width=360, height=240)
+        outp_x = []
+        outp_y = []
+
+        mask = cv2.inRange(
+            cv2.cvtColor(cv2.GaussianBlur(self.frame, (11, 11), 0),
+                         cv2.COLOR_BGR2HSV),
+            self.playersLower, self.playersUpper)
+        # mask = cv2.erode(mask, None, iterations=2)
+        # mask = cv2.dilate(mask, None, iterations=2)
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
+        opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
+        close = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel, iterations=1)
+
+        cnts = cv2.findContours(close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+
+        for c in cnts:
+            x,y,w,h = cv2.boundingRect(c)
+            # cv2.rectangle(self.frame, (x, y), (x + w, y + h), (36,255,12), 2)
+            outp_x.append(x + w/2)
+            outp_y.append(y + h/2)
+        
+        # cv2.imshow('mask', mask)
+        # cv2.imshow('close', close)
+        # cv2.imshow('frame', self.frame)
+        return outp_x, outp_y
 
     def get_frame(self):
         frame = self.vs.read()
