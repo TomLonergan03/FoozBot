@@ -81,14 +81,15 @@ class Model:
 
 
 class TrajectoryAdapter:
-    def __init__(self, player_row_1 : float, player_row_2 : float):
+    def __init__(self, player_row_1 : float, player_row_2 : float, top_left : tuple[float, float], bottom_right : tuple[float, float]):
         self.player_row_1 = player_row_1
         self.player_row_2 = player_row_2
 
         ATTRACTION_FORCE = 0.00008
         FRICTION = 0.01
         self.model = Model(Location(0, 0, 0), FRICTION,
-                           ATTRACTION_FORCE, ATTRACTION_FORCE)
+                           ATTRACTION_FORCE, ATTRACTION_FORCE, 
+                           top_left[0], top_left[1], bottom_right[0], bottom_right[1])
         self.i = 1
 
         self.current_predicted_path = Trajectory([Location(0,0,0)])

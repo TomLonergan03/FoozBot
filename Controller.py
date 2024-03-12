@@ -23,7 +23,7 @@ FIRST_PLAYER_ROW = players_pos[0]
 SECOND_PLAYER_ROW = players_pos[1]
 
 # PATH PREDICTION
-trajectory_finder = TrajectoryAdapter.TrajectoryAdapter(FIRST_PLAYER_ROW, SECOND_PLAYER_ROW)
+trajectory_finder = TrajectoryAdapter.TrajectoryAdapter(FIRST_PLAYER_ROW, SECOND_PLAYER_ROW, top_left= top_left, bottom_right= bottom_right)
 
 
 # PLAYER CONTROLS
@@ -45,14 +45,14 @@ while True:
         new_player_row_intersections = trajectory_finder.get_new_intersections(ball_position_timestamp)
 
         # PlayerControls
-        player_controller.update_ball_position(ball_position, new_player_row_intersections)
+        player_controller.update_ball_position(ball_position, new_player_row_intersections, time.time())
 
     if DISPLAY:
         image = ball_vision.get_frame()
         trajectory_finder.draw_trajectory_on_frame(image, trajectory_finder.current_predicted_path)
         player_controller.draw_intersections_on_frame(image)
         cv2.imshow("System Visualisation", image)
-        print("Ball position: " + str(ball_position) + "   " + str("Bottom right: " + str(bottom_right)))
+        # print("Ball position: " + str(ball_position) + "   " + str("Bottom right: " + str(bottom_right)))
     
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):

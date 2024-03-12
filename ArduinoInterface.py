@@ -30,7 +30,7 @@ class ArduinoInterface:
         self.send_command("lateral " + str(position))
 
     # TODO
-    def get_position(self):
+    def get_position(self, plyer):
         return None
 
     def close(self):

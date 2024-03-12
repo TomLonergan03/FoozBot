@@ -19,8 +19,8 @@ class MockArduinoInterface():
         return None
 
     # TODO
-    def get_position(self):
-        return None
+    def get_position(self, player):
+        return 55
 
     def close(self):
         return None
