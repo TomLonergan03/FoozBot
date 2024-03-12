@@ -31,7 +31,7 @@ class ArduinoInterface:
 
     # TODO
     def get_position(self, plyer):
-        return None
+        return 55
 
     def close(self):
         self.ser.close()
