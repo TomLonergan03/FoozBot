@@ -1,3 +1,5 @@
+import time
+
 import cv2
 
 class PlayerController:
@@ -58,18 +60,28 @@ class PlayerController:
 
     # Returns which player should hit the ball; 0, 1 or 2
     def which_players_zone(self, x_intercept : float):
-        min_y = self.start_coords[1]
-        h = self.coords_range[1]
-        max_y = self.max_coords[1]
+
         # """
-        if min_y < x_intercept < min_y + h / 3:
+        if self.player_zone_coords(0)[0] < x_intercept < self.player_zone_coords(0)[1]:
             return 0
-        if min_y + h / 3 < x_intercept < min_y + (2 * h / 3):
+        if self.player_zone_coords(1)[0] < x_intercept < self.player_zone_coords(1)[1]:
             return 1
-        if min_y + (2 * h / 3) < x_intercept < max_y:
+        if self.player_zone_coords(2)[0] < x_intercept < self.player_zone_coords(2)[1]:
             return 2
         # """
         # return 0
+
+    def player_zone_coords(self, player_no):
+        min_y = self.start_coords[1]
+        h = self.coords_range[1]
+        max_y = self.max_coords[1]
+
+        if player_no == 0:
+            return (int(min_y),int(min_y + h / 3))
+        if player_no == 1:
+            return (int(min_y + h / 3), int(min_y + (2 * h / 3)))
+        if player_no == 2:
+            return (int(min_y + (2 * h / 3)), int(min_y + h))
 
     def move_players(self, intersect_pts):
         """ Pass current ball coordinates and decides how the player should move laterally."""
@@ -126,20 +138,22 @@ class PlayerController:
                 self.arduino_interface.go_horizontal(1)
                 print("Row 1 go Horizontal")
                 self.first_row_horizontal = True
-        elif self.first_row_horizontal and ball_x_pos <= self.player_row_x[0]:
-            self.arduino_interface.go_vertical(1)
-            print("Row 1 go Vertical")
-            self.first_row_horizontal = False
+        else:
+            if self.first_row_horizontal:
+                self.arduino_interface.go_vertical(1)
+                print("Row 1 go Vertical")
+                self.first_row_horizontal = False
 
         if ball_x_pos > self.player_row_x[1]:
             if not self.second_row_horizontal:
                 self.arduino_interface.go_horizontal(2)
                 print("Row 2 go Horizontal")
                 self.second_row_horizontal = True
-        elif self.second_row_horizontal and ball_x_pos <= self.player_row_x[1]:
-            self.arduino_interface.go_vertical(2)
-            print("Row 2 go Vertical")
-            self.second_row_horizontal = False
+        else:
+            if  self.second_row_horizontal:
+                self.arduino_interface.go_vertical(2)
+                print("Row 2 go Vertical")
+                self.second_row_horizontal = False
 
     # Returns: (boolean, boolean) the bools represent if the ball is behind the first players and second players
     # respectively.
@@ -191,7 +205,50 @@ class PlayerController:
         if self.last_known_player_intersections[0] is not None:
             cv2.circle(frame, (player_row_1, int(self.last_known_player_intersections[0])), radius=5, color=(255, 255, 0), thickness=5)
 
+            if self.which_players_zone(self.last_known_player_intersections[0]) == 0:
+                player_1_line = self.player_zone_coords(0)
+                cv2.line(frame, (player_row_1, player_1_line[0]), (player_row_1, player_1_line[1]), color=(0, 0, 255),
+                         thickness=2)
+
+            if self.which_players_zone(self.last_known_player_intersections[0]) == 1:
+                player_2_line = self.player_zone_coords(1)
+                cv2.line(frame, (player_row_1, player_2_line[0]), (player_row_1, player_2_line[1]), color=(0, 0, 255),
+                         thickness=2)
+
+            if self.which_players_zone(self.last_known_player_intersections[0]) == 2:
+                player_3_line = self.player_zone_coords(2)
+                cv2.line(frame, (player_row_1, player_3_line[0]), (player_row_1, player_3_line[1]), color=(0, 0, 255),
+                         thickness=2)
+
+
+
         if self.last_known_player_intersections[1] is not None:
             cv2.circle(frame, (player_row_2, int(self.last_known_player_intersections[1])), radius=5, color=(255, 255, 0), thickness=5)
 
-        #cv2.circle(frame,(player_row_1, ))
+            if self.which_players_zone(self.last_known_player_intersections[1]) == 0:
+                player_1_line = self.player_zone_coords(0)
+                cv2.line(frame, (player_row_2, player_1_line[0]), (player_row_2, player_1_line[1]), color=(0, 0, 255),
+                         thickness=2)
+
+            if self.which_players_zone(self.last_known_player_intersections[1]) == 1:
+                player_2_line = self.player_zone_coords(1)
+                cv2.line(frame, (player_row_2, player_2_line[0]), (player_row_2, player_2_line[1]), color=(0, 0, 255),
+                         thickness=2)
+
+            if self.which_players_zone(self.last_known_player_intersections[1]) == 2:
+                player_3_line = self.player_zone_coords(2)
+                cv2.line(frame, (player_row_2, player_3_line[0]), (player_row_2, player_3_line[1]), color=(0, 0, 255),
+                         thickness=2)
+
+    def draw_text(self, frame):
+
+        player_1_horizontal_text = "R1 Flat:" + str(self.first_row_horizontal)
+        cv2.putText(frame, player_1_horizontal_text, (240,245),fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(255, 0, 255), thickness=2)
+
+        player_2_horizontal_text = "R2 Flat:" + str(self.second_row_horizontal)
+        cv2.putText(frame, player_2_horizontal_text, (105,245),fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(255, 0, 255), thickness=2)
+
+        if self.first_row_kicking:
+            cv2.putText(frame,"Kicking", (240,265),fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(255, 0, 255), thickness=2)
+        if self.second_row_kicking:
+            cv2.putText(frame,"Kicking", (105,265),fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(255, 0, 255), thickness=2)

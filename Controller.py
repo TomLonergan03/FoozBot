@@ -1,5 +1,7 @@
 import time
 import cv2
+import numpy as np
+
 import BallDetectionAdapter
 import PlayerController
 import TrajectoryAdapter
@@ -13,7 +15,7 @@ This allows us to test the code when we don't have the arduino physically connec
 arduino_interface = MockArduinoInterface.MockArduinoInterface()
 
 # VISION
-ball_vision = BallDetectionAdapter.BallEdgeDetection(src=0)
+ball_vision = BallDetectionAdapter.BallEdgeDetection(src=4)
 top_left, bottom_right = ball_vision.get_top_left_bottom_right()
 temp = ball_vision.get_players_x()
 players_pos = temp[0]
@@ -51,9 +53,15 @@ while True:
         image = ball_vision.get_frame()
         trajectory_finder.draw_trajectory_on_frame(image, trajectory_finder.current_predicted_path)
         player_controller.draw_intersections_on_frame(image)
-        cv2.imshow("System Visualisation", image)
         # print("Ball position: " + str(ball_position) + "   " + str("Bottom right: " + str(bottom_right)))
-    
+
+        width, height = 400, 400  # Set the desired width and height of the image
+        white_frame = np.ones((height, width, 3), dtype=np.uint8) * 255  # 3 channels for RGB, filled with white color
+
+        player_controller.draw_text(image)
+        cv2.imshow("System Visualisation", image)
+
+
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
         break
