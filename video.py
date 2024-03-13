@@ -9,8 +9,6 @@ FRICTION = 0.01
 FRICTION_LIMIT = 0
 ATTRACTION_MIN_SPEED = 0
 
-CALCULATE_AVG = True
-
 model = Model(Location(0, 0, 0), FRICTION, ATTRACTION_FORCE_X,
               ATTRACTION_FORCE_Y, 92, 41, 1190, 614, iterations=30,
               friction_limit=FRICTION_LIMIT, attraction_min_speed=ATTRACTION_MIN_SPEED)
@@ -26,27 +24,9 @@ def process_frame(frame, location, frame_number):
         cv2.circle(frame, location, 5, (0, 0, 255), -1)
         trajectory = model.update(Location(
             location[0], location[1], frame_number))
-        futures.append(trajectory)
-        if CALCULATE_AVG:
-            for future in futures:
-                for frame_number in range(1, len(future.locations)):
-                    cv2.line(frame, (int(future.locations[frame_number-1].x), int(future.locations[frame_number-1].y)),
-                             (int(future.locations[frame_number].x), int(future.locations[frame_number].y)), (0, 180, 100), 2)
-            avg = [] * len(futures[0].locations)
-            for frame_number in range(len(futures[0].locations)):
-                avg.append(Location(0, 0, 0))
-            for future in futures:
-                for frame_number in range(len(future.locations)):
-                    avg[frame_number] = Location(avg[frame_number].x + future.locations[frame_number].x,
-                                                 avg[frame_number].y + future.locations[frame_number].y, future.locations[frame_number].time)
-            for av in avg:
-                av.x = av.x / len(futures)
-                av.y = av.y / len(futures)
-        else:
-            avg = futures[-1].locations
-        for frame_number in range(1, len(avg)):
-            cv2.line(frame, (int(avg[frame_number-1].x), int(avg[frame_number-1].y)),
-                     (int(avg[frame_number].x), int(avg[frame_number].y)), (0, 255, 0), 2)
+        for frame_number in range(1, len(trajectory)):
+            cv2.line(frame, (int(trajectory[frame_number-1].x), int(trajectory[frame_number-1].y)),
+                     (int(trajectory[frame_number].x), int(trajectory[frame_number].y)), (0, 255, 0), 2)
     out.write(frame.astype('uint8'))
     cv2.imshow("Video", frame)
 

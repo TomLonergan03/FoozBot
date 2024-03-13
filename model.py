@@ -15,27 +15,6 @@ class Location:
     def copy(self):
         return Location(self.x, self.y, self.time)
 
-
-@dataclass
-class Trajectory:
-    locations: List[Location]
-
-
-def display_trajectory(image, trajectory: Trajectory, color=(0, 0, 255)):
-    for i in range(1, len(trajectory.locations)):
-        cv2.line(image, (int(trajectory.locations[i-1].x), int(trajectory.locations[i-1].y)),
-                 (int(trajectory.locations[i].x), int(trajectory.locations[i].y)), color, 2)
-
-
-KNOWN_LOCATIONS = [Location(110, 120, 1),
-                   Location(120, 125, 2),
-                   Location(130, 130, 3),
-                   Location(140, 132, 4),
-                   Location(150, 134, 5),
-                   Location(160, 135, 6),
-                   Location(170, 130, 7),]
-
-
 class Model:
     def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0, y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 200, board_max_y: int = 200, iterations: int = 200, friction_limit: int = 0, attraction_min_speed: int = 0):
         self.history = deque(maxlen=2)
@@ -51,8 +30,9 @@ class Model:
         self.iterations = iterations
         self.friction_limit = friction_limit
         self.attraction_min_speed = attraction_min_speed
+        self.futures = deque(maxlen=10)
 
-    def update(self, location: Location) -> Trajectory:
+    def update(self, location: Location) -> List[Location]:
         self.history.append(
             Location((location.x + self.prediction.x)/2, (location.y + self.prediction.y)/2, location.time))
         # self.history.append(location)
@@ -62,9 +42,21 @@ class Model:
             future.append(self.calculateFutureLocation(
                 future, 1))
         self.prediction = future[2]
-        return Trajectory([location] + future[2:])
+        trajectory = [location] + future[2:]
+        self.futures.append(trajectory)
+        avg = [] * len(self.futures[0])
+        for frame_number in range(len(self.futures[0])):
+            avg.append(Location(0, 0, 0))
+        for future in self.futures:
+            for frame_number in range(len(future)):
+                avg[frame_number] = Location(avg[frame_number].x + future[frame_number].x,
+                                             avg[frame_number].y + future[frame_number].y, future[frame_number].time)
+        for av in avg:
+            av.x = av.x / len(self.futures)
+            av.y = av.y / len(self.futures)
+        return avg
 
-    def calculateFutureLocation(self, trajectory: Trajectory, time: float) -> Location:
+    def calculateFutureLocation(self, trajectory: List[Location], time: float) -> Location:
         dx = (trajectory[-1].x - trajectory[-2].x) / \
             (trajectory[-1].time - trajectory[-2].time)
         dy = (trajectory[-1].y - trajectory[-2].y) / \
@@ -90,19 +82,3 @@ class Model:
         new_location = Location(
             trajectory[-1].x + dx * time, trajectory[-1].y + dy * time, trajectory[-1].time + time)
         return new_location
-
-
-if __name__ == "__main__":
-    ATTRACTION_FORCE = 0.00008
-    FRICTION = 0.01
-
-    model = Model(KNOWN_LOCATIONS[0], FRICTION,
-                  ATTRACTION_FORCE, ATTRACTION_FORCE)
-    for i in range(1, len(KNOWN_LOCATIONS)):
-        image = np.zeros((480, 480, 3), np.uint8)
-        cv2.rectangle(image, (100, 100), (300, 300), (220, 0, 0), 3)
-        display_trajectory(image, Trajectory(KNOWN_LOCATIONS[:i]), (0, 0, 255))
-        future = model.update(KNOWN_LOCATIONS[i])
-        display_trajectory(image, future, (0, 255, 0))
-        cv2.imshow("trajectory", image)
-        cv2.waitKey(0)
