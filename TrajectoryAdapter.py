@@ -17,8 +17,6 @@ class Trajectory:
     locations: List[Location]
 
 
-
-
 class Model:
     def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0,
                  y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 321,
