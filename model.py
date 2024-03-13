@@ -12,6 +12,9 @@ class Location:
     y: float
     time: float
 
+    def copy(self):
+        return Location(self.x, self.y, self.time)
+
 
 @dataclass
 class Trajectory:
@@ -35,8 +38,12 @@ KNOWN_LOCATIONS = [Location(110, 120, 1),
 
 class Model:
     def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0, y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 200, board_max_y: int = 200, iterations: int = 200, friction_limit: int = 0, attraction_min_speed: int = 0):
-        self.history = deque(maxlen=2)
-        self.history.append(initial_pos)
+        self.history = deque(maxlen=3)
+        self.history.append(initial_pos.copy())
+        self.history[-1].time -= 2
+        self.history.append(initial_pos.copy())
+        self.history[-1].time -= 1
+        self.history.append(initial_pos.copy())
         self.friction = 1 - friction
         self.x_attraction_force = x_attraction_force
         self.y_attraction_force = y_attraction_force
@@ -67,18 +74,29 @@ class Model:
         dy = (trajectory[-1].y - trajectory[-2].y) / \
             (trajectory[-1].time - trajectory[-2].time)
 
-        if abs(dx) > self.attraction_min_speed:
-            dx -= (trajectory[-1].x - (self.board_max_x -
-                                       self.board_min_x) / 2) ** 2 * self.x_attraction_force
-        if abs(dy) > self.attraction_min_speed:
-            dy -= (trajectory[-1].y - (self.board_max_y -
-                                       self.board_min_y) / 2) * self.y_attraction_force
+        previous_dx = (trajectory[-2].x - trajectory[-3].x) / (trajectory[-2].time -
+                                                               trajectory[-3].time)
+        previous_dy = (trajectory[-2].y - trajectory[-3].y) / (trajectory[-2].time -
+                                                               trajectory[-3].time)
 
-        # friction
-        if abs(dx) > self.friction_limit:
-            dx *= self.friction
-        if abs(dy) > self.friction_limit:
-            dy *= self.friction
+        d2x = (dx - previous_dx) / (trajectory[-1].time - trajectory[-2].time)
+        d2y = (dy - previous_dy) / (trajectory[-1].time - trajectory[-2].time)
+
+        dx += d2x * (time ** 2) / 2
+        dy += d2y * (time ** 2) / 2
+
+        # if abs(dx) > self.attraction_min_speed:
+        #     dx -= (trajectory[-1].x - (self.board_max_x -
+        #                                self.board_min_x) / 2) ** 2 * self.x_attraction_force
+        # if abs(dy) > self.attraction_min_speed:
+        #     dy -= (trajectory[-1].y - (self.board_max_y -
+        #                                self.board_min_y) / 2) * self.y_attraction_force
+
+        # # friction
+        # if abs(dx) > self.friction_limit:
+        #     dx *= self.friction
+        # if abs(dy) > self.friction_limit:
+        #     dy *= self.friction
 
         if trajectory[-1].x >= self.board_max_x or trajectory[-1].x <= self.board_min_x:
             dx = -dx

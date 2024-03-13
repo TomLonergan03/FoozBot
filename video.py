@@ -12,7 +12,7 @@ ATTRACTION_MIN_SPEED = 0
 CALCULATE_AVG = True
 
 model = Model(Location(0, 0, 0), FRICTION, ATTRACTION_FORCE_X,
-              ATTRACTION_FORCE_Y, 92, 41, 1190, 614, iterations=20,
+              ATTRACTION_FORCE_Y, 92, 41, 1190, 614, iterations=30,
               friction_limit=FRICTION_LIMIT, attraction_min_speed=ATTRACTION_MIN_SPEED)
 
 
