@@ -15,6 +15,7 @@ class Location:
     def copy(self):
         return Location(self.x, self.y, self.time)
 
+
 class Model:
     def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0, y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 200, board_max_y: int = 200, iterations: int = 200, friction_limit: int = 0, attraction_min_speed: int = 0):
         self.history = deque(maxlen=2)
@@ -33,9 +34,10 @@ class Model:
         self.futures = deque(maxlen=10)
 
     def update(self, location: Location) -> List[Location]:
+        location = Location((location.x + self.prediction.x) / 2,
+                            (location.y + self.prediction.y) / 2, location.time)
         self.history.append(
-            Location((location.x + self.prediction.x)/2, (location.y + self.prediction.y)/2, location.time))
-        # self.history.append(location)
+            Location(location.x, location.y, location.time))
         future = []
         future.extend(self.history)
         for _ in range(self.iterations):
@@ -64,7 +66,7 @@ class Model:
 
         if abs(dx) > self.attraction_min_speed:
             dx -= (trajectory[-1].x - (self.board_max_x -
-                                       self.board_min_x) / 2) ** 2 * self.x_attraction_force
+                                       self.board_min_x) / 2) * self.x_attraction_force
         if abs(dy) > self.attraction_min_speed:
             dy -= (trajectory[-1].y - (self.board_max_y -
                                        self.board_min_y) / 2) * self.y_attraction_force
