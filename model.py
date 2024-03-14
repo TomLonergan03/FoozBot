@@ -13,7 +13,22 @@ class Location:
 
 
 class Model:
-    def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0, y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 200, board_max_y: int = 200, iterations: int = 200, friction_limit: int = 0, attraction_min_speed: int = 0):
+    def __init__(self, initial_pos: Location, friction: float = 1, x_attraction_force: float = 0, y_attraction_force: float = 0, board_min_x: int = 0, board_min_y: int = 0, board_max_x: int = 200, board_max_y: int = 200, iterations: int = 20, friction_limit: int = 0, attraction_min_speed: int = 0, number_of_averages: int = 10):
+        """
+        Args:
+        initial_pos (Location): Initial position of the ball.
+        friction (float, optional): Multiplied with velocity each frame to imitate friction slowing the ball. Defaults to 1.
+        x_attraction_force (float, optional): Attraction force in the x axis. Defaults to 0.
+        y_attraction_force (float, optional): Attraction force in the y axis. Defaults to 0.
+        board_min_x (int, optional): Minimum x value the ball can take. Defaults to 0.
+        board_min_y (int, optional): Minimum y value the ball can take. Defaults to 0.
+        board_max_x (int, optional): Maximum x value the ball can take. Defaults to 200.
+        board_max_y (int, optional): Maximum y value the ball can take. Defaults to 200.
+        iterations (int, optional): Number of iterations to predict the future. Defaults to 20.
+        friction_limit (int, optional): Minimum speed for friction to occur. Defaults to 0.
+        attraction_min_speed (int, optional): Minimum speed for attraction to occur. Defaults to 0.
+        number_of_averages (int, optional): Number of averages to calculate the future. Defaults to 10.
+        """
         self.history = deque(maxlen=2)
         self.history.append(initial_pos)
         self.friction = 1 - friction
@@ -27,9 +42,16 @@ class Model:
         self.iterations = iterations
         self.friction_limit = friction_limit
         self.attraction_min_speed = attraction_min_speed
-        self.futures = deque(maxlen=10)
+        self.futures = deque(maxlen=number_of_averages)
 
     def update(self, location: Location) -> List[Location]:
+        """
+        Predicts the future path of the ball.
+        Args:
+        location (Location): The current location of the ball.
+        Returns:
+        List[Location]: A list of the future locations of the ball.
+        """
         location = Location((location.x + self.prediction.x) / 2,
                             (location.y + self.prediction.y) / 2, location.time)
         self.history.append(
@@ -55,6 +77,14 @@ class Model:
         return avg
 
     def calculateFutureLocation(self, trajectory: List[Location], time: float) -> Location:
+        """
+        Calculates the next location of the ball based on a trajectory.
+        Args:
+        trajectory (List[Location]): The past (real or predicted) trajectory of the ball.
+        time (float): The time between the current and desired next location.
+        Returns:
+        Location: The next location of the ball.
+        """
         dx = (trajectory[-1].x - trajectory[-2].x) / \
             (trajectory[-1].time - trajectory[-2].time)
         dy = (trajectory[-1].y - trajectory[-2].y) / \
