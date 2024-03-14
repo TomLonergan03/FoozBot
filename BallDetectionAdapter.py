@@ -27,6 +27,7 @@ class BallEdgeDetection():
         # if a video path was not supplied, grab the reference to the webcam
         self.vs = VideoStream(src=src).start()
         self.frame = self.vs.read()
+        self.frame_no = 0
         # self.frame_num = 0
 
         self.top_left_bottom_right = self.get_top_left_bottom_right()
@@ -36,6 +37,7 @@ class BallEdgeDetection():
     def get_ball_position(self):
         # grab the current frame
         self.frame = self.vs.read()
+        self.frame_no += 1
         # self.frame_num += 1
         # handle the frame from VideoCapture or VideoStream
 

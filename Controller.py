@@ -43,7 +43,7 @@ while True:
     if ball_position is not None:
 
         # Trajectory Prediction
-        ball_position_timestamp = Location(ball_position[0], ball_position[1], time.time() - start_time)    # can alternatively use frame number instead of time
+        ball_position_timestamp = Location(ball_position[0], ball_position[1], ball_vision.frame_no)    # can alternatively use frame number instead of time
         new_player_row_intersections = trajectory_finder.get_new_intersections(ball_position_timestamp)
 
         # PlayerControls
