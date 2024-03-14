@@ -77,10 +77,19 @@ class Model:
         if abs(dy) > self.friction_limit:
             dy *= self.friction
 
-        if trajectory[-1].x >= self.board_max_x or trajectory[-1].x <= self.board_min_x:
-            dx = -dx
-        if trajectory[-1].y >= self.board_max_y or trajectory[-1].y <= self.board_min_y:
-            dy = -dy
         new_location = Location(
             trajectory[-1].x + dx * time, trajectory[-1].y + dy * time, trajectory[-1].time + time)
+
+        if new_location.x >= self.board_max_x:
+            dx = -dx
+            new_location.x = self.board_max_x + dx * time
+        elif new_location.x <= self.board_min_x:
+            dx = -dx
+            new_location.x = self.board_min_x + dx * time
+        if new_location.y >= self.board_max_y:
+            dy = -dy
+            new_location.y = self.board_max_y + dy * time
+        elif new_location.y <= self.board_min_y:
+            dy = -dy
+            new_location.y = self.board_min_y + dy * time
         return new_location
