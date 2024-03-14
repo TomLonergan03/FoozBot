@@ -1,4 +1,5 @@
 import time
+from ArduinoInterface import ArduinoInterface
 
 import cv2
 
@@ -38,7 +39,7 @@ class PlayerController:
         max_coords[0] - start_coords[0], max_coords[1] - start_coords[1])  # effectively the w and h of the field
 
         self.arduino_interface = arduino_interface
-
+        assert isinstance(self.arduino_interface, ArduinoInterface)
         self.last_known_player_intersections = [0.0, 0.0]
 
     def update_ball_position(self, ball_coords, player_intersections: list[float], time):
@@ -96,8 +97,11 @@ class PlayerController:
         else:
             player_in_row = self.which_players_zone(intersect_pts[0])
             if player_in_row is not None:
-                lateral_percentage = (intersect_pts[0] - player_in_row * max_player_coord - self.start_coords[
-                    1]) / max_player_coord
+                lateral_percentage = (intersect_pts[0] - player_in_row * max_player_coord - self.start_coords[1]) / max_player_coord
+                if lateral_percentage < 0:
+                    lateral_percentage = 0
+                elif lateral_percentage > 1:
+                    lateral_percentage = 1
                 self.arduino_interface.move_to(1, lateral_percentage * 110)
                 print("Move row 1 to " + str(lateral_percentage * 110))
 
@@ -106,8 +110,11 @@ class PlayerController:
         else:
             player_in_row = self.which_players_zone(intersect_pts[1])
             if player_in_row is not None:
-                lateral_percentage = (intersect_pts[1] - player_in_row * max_player_coord - self.start_coords[
-                    1]) / max_player_coord
+                lateral_percentage = (intersect_pts[1] - player_in_row * max_player_coord - self.start_coords[1]) / max_player_coord
+                if lateral_percentage < 0:
+                    lateral_percentage = 0
+                elif lateral_percentage > 1:
+                    lateral_percentage = 1
                 self.arduino_interface.move_to(2, lateral_percentage * 110)
                 print("Move row 2 to " + str(lateral_percentage * 110))
 

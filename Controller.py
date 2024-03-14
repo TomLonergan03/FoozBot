@@ -6,16 +6,17 @@ import BallDetectionAdapter
 import PlayerController
 import TrajectoryAdapter
 from Mocks import MockArduinoInterface
+import ArduinoInterface
 from TrajectoryAdapter import Location
 
 # MOTOR INTERFACE
 """
 arduino_interface = ArduinoInterface.ArduinoInterface()
 This allows us to test the code when we don't have the arduino physically connected"""
-arduino_interface = MockArduinoInterface.MockArduinoInterface()
+arduino_interface = ArduinoInterface.ArduinoInterface() # MockArduinoInterface.MockArduinoInterface()
 
 # VISION
-ball_vision = BallDetectionAdapter.BallEdgeDetection(src=4)
+ball_vision = BallDetectionAdapter.BallEdgeDetection(src=0)
 top_left, bottom_right = ball_vision.get_top_left_bottom_right()
 temp = ball_vision.get_players_x()
 players_pos = temp[0]

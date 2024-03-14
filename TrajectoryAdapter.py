@@ -30,8 +30,9 @@ class TrajectoryAdapter:
                            x_attraction_force=ATTRACTION_FORCE, y_attraction_force=ATTRACTION_FORCE,
                            board_min_x=top_left[0], board_min_y=top_left[1], board_max_x=bottom_right[0], board_max_y=bottom_right[1], iterations=200, friction_limit=FRICTION, attraction_min_speed=0.1)
         self.i = 1
-
-        self.current_predicted_path = []
+        
+        temp = [Location(0, 0, 0)]
+        self.current_predicted_path : Trajectory = Trajectory(temp)
 
     def get_new_intersections(self, last_known_position):
         path = self.model.update(last_known_position)
@@ -59,7 +60,8 @@ class TrajectoryAdapter:
     def draw_trajectory_on_frame(self,image, trajectory: Trajectory, color=(0, 0, 255)):
         print(trajectory)
         assert type(trajectory) == Trajectory
-        print(trajectory.locations[0])
+        if (len(trajectory.locations) > 0):
+            print(trajectory.locations[0])
        # print(trajectory)
         if len(trajectory.locations) == 0:
             return
