@@ -2,10 +2,6 @@ from collections import deque
 from dataclasses import dataclass
 from typing import List
 
-import numpy as np
-import cv2
-
-
 @dataclass
 class Location:
     x: float
