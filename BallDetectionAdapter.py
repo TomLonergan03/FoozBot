@@ -13,7 +13,7 @@ class BallEdgeDetection():
     def __init__(self, src):
         self.ballLower = (0, 134, 199)
         self.ballUpper = (30, 255, 255)
-        self.pts = deque(maxlen=10)
+        self.pts = deque(maxlen=64) # Increasing from 10 to 64 reduces Pi load
 
         self.playersLower = (35, 80, 156)
         self.playersUpper = (172, 184, 255)
@@ -25,7 +25,7 @@ class BallEdgeDetection():
         self.h = h
 
         # if a video path was not supplied, grab the reference to the webcam
-        self.vs = VideoStream(src=src).start()
+        self.vs = VideoStream(src=src, resolution=(360,240)).start()
         self.frame = self.vs.read()
         self.frame_no = 0
         # self.frame_num = 0
@@ -89,7 +89,7 @@ class BallEdgeDetection():
         # Converting the frame to gray scale and applying Canny edge detection
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-        edges = cv2.Canny(blurred, 130, 150)
+        edges = cv2.Canny(blurred, 100, 200) # Altered values to reduce Pi computational load -- Possibly less accurate, but pretty good enough
         return blurred, edges
 
     def get_players_x(self):
@@ -140,7 +140,7 @@ class BallEdgeDetection():
         for i in range(1, len(self.pts)):
             if self.pts[i - 1] is None or self.pts[i] is None:
                 continue
-            thickness = int(np.sqrt(10 / float(i + 1)) * 2.5)
+            thickness = int(np.sqrt(64 / float(i + 1)) * 2.5) # Increasing from 10 to 64 reduces Pi load
             cv2.line(frame, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
 
         #key = cv2.waitKey(1) & 0xFF
