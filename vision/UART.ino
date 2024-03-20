@@ -1,3 +1,5 @@
+#define VCC2 5//define pin 5 as VCC2 for V5
+
 typedef struct {
   int distance;
   int strength;
@@ -45,6 +47,9 @@ void getLidarData(TF* lidar)
 }
 
 void setup() {
+  pinMode(VCC2,OUTPUT);
+  digitalWrite(VCC2, HIGH);
+
   Serial.begin(115200);
 }
 
