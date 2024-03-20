@@ -1,31 +1,30 @@
 import serial
-import re
+import time
 
-# Function to parse the data received from Arduino
-def parse_data(data_str):
-    # Regular expression to match the data format
-    pattern = re.compile(r"Distance: (\d+)cm\tStrength: (\d+)\tTemp: (-?\d+)")
-    match = pattern.search(data_str)
-    if match:
-        distance = int(match.group(1))
-        strength = int(match.group(2))
-        temp = int(match.group(3))
-        return distance, strength, temp
-    else:
-        return None
+# Configure the serial port
+ser = serial.Serial('/dev/ttyACM0', 115200)  # Replace '/dev/ttyACM0' with the appropriate port
 
-# Setup serial connection (replace '/dev/ttyACM0' with the correct port)
-ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
+# Wait for the serial connection to be established
+time.sleep(2)
 
-try:
-    while True:
-        if ser.in_waiting > 0:
-            line = ser.readline().decode('utf-8').strip()
-            data = parse_data(line)
-            if data:
-                distance, strength, temp = data
-                print(f"Distance: {distance}cm, Strength: {strength}, Temp: {temp}")
-except KeyboardInterrupt:
-    print("Program terminated")
-finally:
-    ser.close()
+while True:
+    if ser.in_waiting > 0:
+        # Read the data from the serial port
+        data = ser.readline().decode('utf-8').strip()
+        
+        # Check if the data contains the expected format
+        if data.startswith("Distance: "):
+            # Extract the values from the data string
+            values = data.split("\t")
+            distance = values[0].split(": ")[1]
+            strength = values[1].split(": ")[1]
+            temp = values[2].split(": ")[1]
+            
+            # Print the extracted values
+            print("Distance:", distance, "cm")
+            print("Strength:", strength)
+            print("Temperature:", temp)
+            print("---")
+    
+    # Add a small delay to avoid excessive CPU usage
+    time.sleep(0.1)
