@@ -78,7 +78,8 @@ class BallEdgeDetection():
         res = cv2.matchTemplate(edges_frame, self.temp_edges, cv2.TM_CCORR_NORMED)
         _, _, _, max_loc = cv2.minMaxLoc(res)
         top_left = max_loc  # Using max_loc for CCoRR
-        bottom_right = (top_left[0] + self.w - 5, top_left[1] + self.h - 5)
+        top_left = (top_left[0], top_left[1] + 13)
+        bottom_right = (top_left[0] + self.w - 5, top_left[1] + self.h - 27)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):

@@ -24,8 +24,8 @@ class TrajectoryAdapter:
 
         ATTRACTION_FORCE = 0.00008
         FRICTION = 0.01
-        print(top_left[0])
-        print(top_left[1])
+        # print(top_left[0])
+        # print(top_left[1])
         self.model = Model(initial_pos=Location(0, 0, 0), friction=FRICTION,
                            x_attraction_force=ATTRACTION_FORCE, y_attraction_force=ATTRACTION_FORCE,
                            board_min_x=top_left[0], board_min_y=top_left[1], board_max_x=bottom_right[0], board_max_y=bottom_right[1], iterations=200, friction_limit=FRICTION, attraction_min_speed=0.1)
@@ -58,15 +58,16 @@ class TrajectoryAdapter:
         return player_intersections
 
     def draw_trajectory_on_frame(self,image, trajectory: Trajectory, color=(0, 0, 255)):
-        print(trajectory)
+        # print(trajectory)
         assert type(trajectory) == Trajectory
         if (len(trajectory.locations) > 0):
-            print(trajectory.locations[0])
+            pass
+            # print(trajectory.locations[0])
        # print(trajectory)
         if len(trajectory.locations) == 0:
             return
-        print(trajectory)
-        print(len(trajectory.locations))
+        # print(trajectory)
+        # print(len(trajectory.locations))
         for i in range(1, len(trajectory.locations)):
             cv2.line(image, (int(trajectory.locations[i - 1].x), int(trajectory.locations[i - 1].y)),
                      (int(trajectory.locations[i].x), int(trajectory.locations[i].y)), color, 2)

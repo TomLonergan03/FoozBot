@@ -4,16 +4,16 @@ import serial
 class ArduinoInterface:
     def __init__(self):
         # Arduino is always on this port
-        self.serial_port = '/dev/ttyACM0'
+        self.serial_port =  'COM5' # '/dev/ttyACM0'
         self.baud_rate = 9600
 
         self.ser = serial.Serial(self.serial_port, self.baud_rate)
         # self.ser = serial.Serial(self.serial_port, self.baud_rate)
-        self.kick_outp = 0  # 0 - no kick, 1 = yes kick
-        self.stand_outp = 0  # 0 - remain in current pos, 1 - stand
-        self.horiz_outp = 0  # 0 - remain in current pos, 1 - go horizontal feet forward, 2 - go horizontal feet backwards
-        self.revolve = 0
-        self.lat_outp = 777  # 0 - 110 - lateral movement, 777 - don't move, 999 - lateral reset
+        self.kick_outp = 0      # 0 - no kick, 1 = yes kick
+        self.stand_outp = 0     # 0 - remain in current pos, 1 - stand
+        self.horiz_outp = 0     # 0 - remain in current pos, 1 - go horizontal feet forward, 2 - go horizontal feet backwards
+        self.revolve = 0        # 0 - don't revolve, 1 - revolve clockwise, 2 - revolve anti-clockwise
+        self.lat_outp = 999     # 0 - 110 - lateral movement, 777 - don't move, 999 - lateral reset
 
         # Experiment with these to reduce latency?
         self.ser.timeout = 1
@@ -26,40 +26,42 @@ class ArduinoInterface:
         outp += str(self.revolve)
         outp += str(self.lat_outp)
         outp += '\n'
-        print(outp)
+        print("Sending: " + outp)
         #print(isinstance(outp,str))
         self.ser.write(outp.encode('utf-8'))
         line = self.ser.readline().decode().strip()
         # Print the line
-        print(line)
-        # self.reset_command()
+        print("Reading: " + line)
+        self.reset_command()
 
     def reset_command(self):
         self.kick_outp = 0
         self.stand_outp = 0
         self.horiz_outp = 0
+        self.revolve = 0
         self.lat_outp = 777
 
     def go_vertical(self, player):
         if player == 2:
             self.stand_outp = 1
-            self.send_command()
+            # self.send_command()
 
     def go_horizontal(self, player):
         if player == 2:
             self.horiz_outp = 1
-            self.send_command()
+            # self.send_command()
 
     def kick(self, player):
         if player == 2:
             self.kick_outp = 1
-            self.send_command()
+            # self.send_command()
 
     # TODO
     def move_to(self, player, position):
+        position = int(position)
         if player == 2:
             self.lat_outp = position
-            self.send_command()
+            # self.send_command()
 
     # TODO
     def get_position(self, plyer):

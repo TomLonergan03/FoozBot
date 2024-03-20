@@ -22,9 +22,12 @@ temp = ball_vision.get_players_x()
 players_pos = temp[0]
 player_start = temp[1]
 assert players_pos != [], "Players row signifiers not found. Please check camera source or replace the blue tape."
-FIRST_PLAYER_ROW = players_pos[0]
-SECOND_PLAYER_ROW = players_pos[1]
-
+if players_pos[0] > players_pos[1]:
+    FIRST_PLAYER_ROW = players_pos[0]
+    SECOND_PLAYER_ROW = players_pos[1]
+else:
+    FIRST_PLAYER_ROW = players_pos[1]
+    SECOND_PLAYER_ROW = players_pos[0]
 # PATH PREDICTION
 trajectory_finder = TrajectoryAdapter.TrajectoryAdapter(FIRST_PLAYER_ROW, SECOND_PLAYER_ROW, top_left= top_left, bottom_right= bottom_right)
 
@@ -45,7 +48,7 @@ start_time = time.time()
 
 predicted_trajectories = []
 actual_trajectories = []
-
+"""
 # Create a figure and axis for the plot
 fig, ax = plt.subplots()
 ax.set_xlabel('Frame Number')
@@ -91,7 +94,7 @@ trajectory_plot_timer.start()
 
 plt.ion()  # Enable interactive mode
 plt.show(block=False)  # Show the plot window
-
+"""
 while True:
     # Vision
     ball_position = ball_vision.get_ball_position()
