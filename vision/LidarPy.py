@@ -1,3 +1,4 @@
+# This code runs the arduino code for the sensor from the Pi
 import serial
 import time
 
