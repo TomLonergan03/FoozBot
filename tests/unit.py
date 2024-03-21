@@ -134,7 +134,7 @@ class ArduinoInterfaceTestCase(unittest.TestCase):
     def setUp(self):
         self.mock_serial = MagicMock()
         self.arduino_interface = ArduinoInterface.ArduinoInterface()
-        self.arduino_interface.ser = self.mock_serial
+        self.arduino_interface.player2 = self.mock_serial
 
     def test_send_command(self):
         self.arduino_interface.send_command("test command")
