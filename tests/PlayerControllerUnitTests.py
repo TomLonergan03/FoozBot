@@ -64,26 +64,26 @@ class PlayerControllerTestCase(unittest.TestCase):
         intersect_pts = [None, None]
         ball_coords = (180, 120)
         self.player_controller.move_players(intersect_pts, ball_coords)
-        self.arduino_interface_mock.move_to.assert_called_with(2, 60.0)
+        self.mock_arduino.move_to.assert_called_with(2, 60.0)
 
     def test_move_players_row1_intersection(self):
         intersect_pts = [60, None]
         ball_coords = (180, 120)
         self.player_controller.move_players(intersect_pts, ball_coords)
-        self.arduino_interface_mock.move_to.assert_called_with(1, 0.0)
+        self.mock_arduino.move_to.assert_called_with(1, 0.0)
 
     def test_move_players_row2_intersection(self):
         intersect_pts = [None, 180]
         ball_coords = (180, 120)
         self.player_controller.move_players(intersect_pts, ball_coords)
-        self.arduino_interface_mock.move_to.assert_called_with(2, 100.0)
+        self.mock_arduino.move_to.assert_called_with(2, 100.0)
 
     def test_move_players_both_intersections(self):
         intersect_pts = [60, 180]
         ball_coords = (180, 120)
         self.player_controller.move_players(intersect_pts, ball_coords)
-        self.arduino_interface_mock.move_to.assert_any_call(1, 0.0)
-        self.arduino_interface_mock.move_to.assert_called_with(2, 100.0)
+        self.mock_arduino.move_to.assert_any_call(1, 0.0)
+        self.mock_arduino.move_to.assert_called_with(2, 100.0)
 
     def test_check_kicking_cooldown(self):
         self.player_controller.first_row_kicking = True
