@@ -9,6 +9,8 @@ import BallDetectionAdapter
 import ArduinoInterface
 
 class PlayerControllerTestCase(unittest.TestCase):
+
+
     def setUp(self):
         self.mock_arduino = MagicMock()
         self.player_controller = PlayerController.PlayerController(
@@ -21,6 +23,9 @@ class PlayerControllerTestCase(unittest.TestCase):
             max_coords=(360, 240),
             arduino_interface=self.mock_arduino
         )
+
+    def passes(self):
+        self.assertTrue(True)
 
     def test_within_kicking_range(self):
         self.assertTrue(self.player_controller.within_kicking_range((100, 200), 124))
