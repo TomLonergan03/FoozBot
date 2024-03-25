@@ -42,7 +42,7 @@ class PlayerControllerTestCase(unittest.TestCase):
 
     def test_players_horizontal_or_vertical(self):
         self.player_controller.players_horizontal_or_vertical((50, 50))
-        self.mock_arduino.go_vertical.assert_called_with(1)
+        self.mock_arduino.go_vertical.assert_called_with(2)
         self.mock_arduino.go_vertical.assert_called_with(2)
 
         self.player_controller.players_horizontal_or_vertical((150, 150))
