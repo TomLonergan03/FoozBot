@@ -7,6 +7,7 @@ import TrajectoryAdapter
 from TrajectoryAdapter import Location, Trajectory
 import BallDetectionAdapter
 import ArduinoInterface
+import time
 
 class PlayerControllerTestCase(unittest.TestCase):
 
