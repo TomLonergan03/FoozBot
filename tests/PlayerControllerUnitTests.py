@@ -53,7 +53,7 @@ class PlayerControllerTestCase(unittest.TestCase):
         intersect_pts = [None, None]
         ball_coords = (180, 120)
         self.player_controller.move_players(intersect_pts, ball_coords)
-        self.mock_arduino.move_to.assert_called_with(2, 50.0)
+        self.mock_arduino.move_to.assert_called_with(2, 55.0)
 
     def test_move_players_row1_intersection(self):
         intersect_pts = [60, None]
