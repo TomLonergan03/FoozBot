@@ -28,7 +28,7 @@ class PlayerControllerTestCase(unittest.TestCase):
         self.assertTrue(True)
 
     def test_within_kicking_range(self):
-        self.assertTrue(self.player_controller.within_kicking_range((100, 200), 124))
+        self.assertTrue(self.player_controller.within_kicking_range((100, 200), 125))
         self.assertFalse(self.player_controller.within_kicking_range((100, 200), 150))
 
     def test_first_row_kick(self):
