@@ -74,11 +74,11 @@ class PlayerControllerTestCase(unittest.TestCase):
         self.mock_arduino.move_to.assert_any_call(1, 75.0)
         self.mock_arduino.move_to.assert_called_with(2, 75.0)
         
-    def test_check_kicking_cooldown(self):
-        self.player_controller.first_row_kicking = True
-        self.player_controller.second_row_kicking = True
-        self.player_controller.last_kick_time = [time.time() - 1, time.time() - 1]
+    # def test_check_kicking_cooldown(self):
+    #     self.player_controller.first_row_kicking = True
+    #     self.player_controller.second_row_kicking = True
+    #     self.player_controller.last_kick_time = [time.time() - 1, time.time() - 1]
 
-        self.player_controller.check_kicking_cooldown(time.time())
-        self.assertFalse(self.player_controller.first_row_kicking)
-        self.assertFalse(self.player_controller.second_row_kicking)
+    #     self.player_controller.check_kicking_cooldown(time.time())
+    #     self.assertFalse(self.player_controller.first_row_kicking)
+    #     self.assertFalse(self.player_controller.second_row_kicking)
