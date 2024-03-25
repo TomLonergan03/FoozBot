@@ -24,7 +24,7 @@ class PlayerControllerTestCase(unittest.TestCase):
             arduino_interface=self.mock_arduino
         )
 
-    def passes(self):
+    def test_passes(self):
         self.assertTrue(True)
 
     def test_within_kicking_range(self):
