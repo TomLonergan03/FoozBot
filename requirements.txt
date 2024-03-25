@@ -1,0 +1,7 @@
+echo "time==$(python -c 'import time; print(time.__version__)')" >> requirements.txt
+echo "opencv-python==$(python -c 'import cv2; print(cv2.__version__)')" >> requirements.txt
+echo "numpy==$(python -c 'import numpy as np; print(np.__version__)')" >> requirements.txt
+echo "matplotlib==$(python -c 'import matplotlib; print(matplotlib.__version__)')" >> requirements.txt
+echo "imutils==$(python -c 'import imutils; print(imutils.__version__)')" >> requirements.txt
+echo "serial==$(python -c 'import serial; print(serial.VERSION)')" >> requirements.txt
+echo "collections==$(python -c 'import collections; print(collections.__version__)')" >> requirements.txt
