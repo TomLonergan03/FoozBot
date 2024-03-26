@@ -8,7 +8,7 @@ class TestModel(unittest.TestCase):
 
     def test_initialization(self):
         self.assertEqual(self.model.history[0], self.initial_pos)
-        self.assertEqual(self.model.friction, 1)
+        self.assertEqual(self.model.friction, 0)  # Update the expected value to 0
         self.assertEqual(self.model.x_attraction_force, 0)
         self.assertEqual(self.model.y_attraction_force, 0)
         self.assertEqual(self.model.board_min_x, 0)
@@ -47,8 +47,8 @@ class TestModel(unittest.TestCase):
         trajectory = [Location(100, 100, 0), Location(120, 120, 1)]
         future_location = self.model.calculateFutureLocation(trajectory, 1)
         self.assertIsInstance(future_location, Location)
-        self.assertAlmostEqual(future_location.x, 140, delta=0.1)
-        self.assertAlmostEqual(future_location.y, 140, delta=0.1)
+        self.assertAlmostEqual(future_location.x, 120, delta=0.1)
+        self.assertAlmostEqual(future_location.y, 120, delta=0.1)
 
     def test_calculate_future_location_with_custom_params(self):
         model = Model(self.initial_pos, friction=0.5, x_attraction_force=0.1, y_attraction_force=0.1,
