@@ -1,5 +1,6 @@
 import unittest
 from model import Model, Location
+import random
 
 class TestModel(unittest.TestCase):
     def setUp(self):
@@ -66,6 +67,76 @@ class TestModel(unittest.TestCase):
         self.assertIsInstance(future_location, Location)
         self.assertLessEqual(future_location.x, 200)
         self.assertLessEqual(future_location.y, 200)
+    
+    def test_update_with_multiple_locations(self):
+        locations = [Location(random.randint(0, 200), random.randint(0, 200), i) for i in range(10)]
+        trajectory = self.model.update(locations[0])
+        for location in locations[1:]:
+            trajectory = self.model.update(location)
+        self.assertEqual(len(trajectory), 201)
+        self.assertIsInstance(trajectory[0], Location)
+
+    def test_update_with_varying_frame_numbers(self):
+        locations = [Location(random.randint(0, 200), random.randint(0, 200), random.randint(0, 100)) for _ in range(10)]
+        trajectory = self.model.update(locations[0])
+        for location in locations[1:]:
+            trajectory = self.model.update(location)
+        self.assertEqual(len(trajectory), 201)
+        self.assertIsInstance(trajectory[0], Location)
+
+    def test_calculate_future_location_with_zero_velocity(self):
+        trajectory = [Location(100, 100, 0), Location(100, 100, 1)]
+        future_location = self.model.calculateFutureLocation(trajectory, 1)
+        self.assertIsInstance(future_location, Location)
+        self.assertAlmostEqual(future_location.x, 100, delta=0.1)
+        self.assertAlmostEqual(future_location.y, 100, delta=0.1)
+
+    def test_calculate_future_location_with_max_iterations(self):
+        model = Model(self.initial_pos, iterations=1000)
+        trajectory = [Location(100, 100, 0), Location(120, 120, 1)]
+        future_location = model.calculateFutureLocation(trajectory, 1)
+        self.assertIsInstance(future_location, Location)
+
+    def test_model_accuracy(self):
+        # Generate random locations for testing
+        locations = [Location(random.randint(0, 200), random.randint(0, 200), i) for i in range(100)]
+        
+        # Update the model with the locations and store the predicted trajectories
+        predicted_trajectories = []
+        for location in locations:
+            predicted_trajectory = self.model.update(location)
+            predicted_trajectories.append(predicted_trajectory)
+        
+        # Calculate the average distance between predicted and actual locations
+        total_distance = 0
+        for i in range(len(locations) - 1):
+            actual_location = locations[i + 1]
+            predicted_location = predicted_trajectories[i][-1]
+            distance = ((actual_location.x - predicted_location.x) ** 2 +
+                        (actual_location.y - predicted_location.y) ** 2) ** 0.5
+            total_distance += distance
+        
+        average_distance = total_distance / (len(locations) - 1)
+        
+        # Assert that the average distance is within an acceptable threshold
+        self.assertLess(average_distance, 10)  # Adjust the threshold as needed
+
+    def test_model_consistency(self):
+        # Generate random locations for testing
+        locations = [Location(random.randint(0, 200), random.randint(0, 200), i) for i in range(100)]
+        
+        # Update the model multiple times with the same locations
+        trajectories = []
+        for _ in range(5):
+            trajectory = []
+            for location in locations:
+                predicted_trajectory = self.model.update(location)
+                trajectory.append(predicted_trajectory)
+            trajectories.append(trajectory)
+        
+        # Assert that the predicted trajectories are consistent across multiple runs
+        for i in range(1, len(trajectories)):
+            self.assertEqual(trajectories[i], trajectories[0])
 
 if __name__ == '__main__':
     unittest.main()
