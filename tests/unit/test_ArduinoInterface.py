@@ -48,8 +48,8 @@ class ArduinoInterfaceTestCase(unittest.TestCase):
 
     def test_send_command(self):
         self.arduino_interface.send_command()
-        self.player_1_serial.write.assert_called_once_with(b"0000777\n")
-        self.player_2_serial.write.assert_called_once_with(b"0000777\n")
+        self.player_1_serial.write.assert_called_once_with(b"0000999\n")
+        self.player_2_serial.write.assert_called_once_with(b"0000999\n")
         self.assert_reset_state()
 
     def assert_reset_state(self):
