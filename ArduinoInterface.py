@@ -2,15 +2,9 @@ import serial
 
 
 class ArduinoInterface:
-    def __init__(self):
-        # Arduino is always on this port
-        self.player_1_port = '/dev/ttyACM0'
-        self.player_2_port =  'COM5' # '/dev/ttyACM0'
-        self.baud_rate = 9600
-
-        self.player1 = serial.Serial(self.player_1_port, self.baud_rate)
-        self.player2 = serial.Serial(self.player_2_port, self.baud_rate)
-        # self.ser = serial.Serial(self.serial_port, self.baud_rate)
+    def __init__(self, player_1_serial, player_2_serial):
+        self.player1 = player_1_serial
+        self.player2 = player_2_serial
 
         self.kick_outp1 = 0
         self.stand_outp1 = 0
@@ -24,35 +18,38 @@ class ArduinoInterface:
         self.revolve2 = 0        # 0 - don't revolve, 1 - revolve clockwise, 2 - revolve anti-clockwise
         self.lat_outp2 = 999     # 0 - 110 - lateral movement, 777 - don't move, 999 - lateral reset
 
-        # Experiment with these to reduce latency?
-        self.player1.timeout = 1
-        self.player1.write_timeout = 1
-        self.player2.timeout = 1
-        self.player2.write_timeout = 1
-
     def send_command(self):
-        outp1 = str(self.kick_outp1)
-        outp1 += str(self.stand_outp1)
-        outp1 += str(self.horiz_outp1)
-        outp1 += str(self.revolve1)
-        outp1 += str(self.lat_outp1)
-        outp1 += '\n'
-        print("Sending to p1: " + outp1)
-        self.player1.write(outp1.encode('utf-8'))
+        player_1_command_string = self.get_player_command_string(1)
+        print("Sending to p1: " + player_1_command_string)
+        self.player1.write(player_1_command_string.encode('utf-8'))
 
-        outp2 = str(self.kick_outp2)
-        outp2 += str(self.stand_outp2)
-        outp2 += str(self.horiz_outp2)
-        outp2 += str(self.revolve2)
-        outp2 += str(self.lat_outp2)
-        outp2 += '\n'
-        print("Sending to p2: " + outp2)
-        self.player2.write(outp2.encode('utf-8'))
+        player_2_command_string = self.get_player_command_string(2)
+        print("Sending to p2: " + player_2_command_string)
+        self.player2.write(player_2_command_string.encode('utf-8'))
 
-        line = self.player2.readline().decode().strip()
         # Print the line
+        line = self.player2.readline().decode().strip()
         print("Reading from p2: " + line)
         self.reset_command()
+
+    def get_player_command_string(self, player_no):
+        if player_no == 1:
+            outp1 = str(self.kick_outp1)
+            outp1 += str(self.stand_outp1)
+            outp1 += str(self.horiz_outp1)
+            outp1 += str(self.revolve1)
+            outp1 += str(self.lat_outp1)
+            outp1 += '\n'
+            return outp1
+        if player_no == 2:
+            outp2 = str(self.kick_outp2)
+            outp2 += str(self.stand_outp2)
+            outp2 += str(self.horiz_outp2)
+            outp2 += str(self.revolve2)
+            outp2 += str(self.lat_outp2)
+            outp2 += '\n'
+            return outp2
+
 
     def reset_command(self):
         self.kick_outp1 = 0
@@ -117,30 +114,3 @@ class ArduinoInterface:
         except KeyboardInterrupt:
             # Close the serial port when KeyboardInterrupt (Ctrl+C) is detected
             self.player2.close()
-
-
-if __name__ == '__main__':
-    arduino = ArduinoInterface()
-    arduino.send_command()
-    arduino.kick_outp2 = 1
-    arduino.stand_outp2 = 0
-    arduino.horiz_outp2 = 0
-    arduino.revolve2 = 0
-    arduino.lat_outp2 = 777
-
-    arduino.send_command()
-    print("test")
-
-
-    #arduino.lat_outp = 50
-    #arduino.send_command()
-
-    arduino.kick_outp2 = 0
-    arduino.revolve2 = 1
-    arduino.send_command()
-    #arduino.send_command()
-
-    arduino.close()
-
-
- #   arduino.read()

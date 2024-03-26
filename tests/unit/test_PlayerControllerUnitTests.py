@@ -1,13 +1,9 @@
-import unittest
-from unittest.mock import MagicMock, patch
-import cv2
-import numpy as np
-import PlayerController
-import TrajectoryAdapter
-from TrajectoryAdapter import Location, Trajectory
-import BallDetectionAdapter
-import ArduinoInterface
 import time
+import unittest
+from unittest.mock import MagicMock
+
+import PlayerController
+
 
 class PlayerControllerTestCase(unittest.TestCase):
 

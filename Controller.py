@@ -1,19 +1,21 @@
 import time
+
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import serial
+
+import ArduinoInterface
 import BallDetectionAdapter
 import PlayerController
 import TrajectoryAdapter
-from Mocks import MockArduinoInterface
-import ArduinoInterface
 from TrajectoryAdapter import Location
 
 # MOTOR INTERFACE
-"""
-arduino_interface = ArduinoInterface.ArduinoInterface()
-This allows us to test the code when we don't have the arduino physically connected"""
-arduino_interface = ArduinoInterface.ArduinoInterface() # MockArduinoInterface.MockArduinoInterface()
+player_1_serial = serial.Serial(player_1_port='/dev/ttyACM0', baudrate=9600, timeout=1,write_timeout=1)
+player_2_serial = serial.Serial(player_2_port='COM5', baudrate=9600,timeout=1,write_timeout=1)
+arduino_interface = ArduinoInterface.ArduinoInterface(player_1_serial,player_2_serial) # MockArduinoInterface.MockArduinoInterface()
+
 
 # VISION
 ball_vision = BallDetectionAdapter.BallEdgeDetection(src=0)
