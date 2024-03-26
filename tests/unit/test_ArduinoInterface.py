@@ -48,8 +48,8 @@ class ArduinoInterfaceTestCase(unittest.TestCase):
 
     def test_send_command(self):
         self.arduino_interface.send_command()
-        self.player_1_serial.write.assert_called_once_with(b"0000999\n")
-        self.player_2_serial.write.assert_called_once_with(b"0000999\n")
+        self.player_1_serial.write.assert_called_once_with(b"0000777\n")
+        self.player_2_serial.write.assert_called_once_with(b"0000777\n")
         self.assert_reset_state()
 
     def assert_reset_state(self):
@@ -57,12 +57,12 @@ class ArduinoInterfaceTestCase(unittest.TestCase):
         self.assertEqual(self.arduino_interface.stand_outp1, 0)
         self.assertEqual(self.arduino_interface.horiz_outp1, 0)
         self.assertEqual(self.arduino_interface.revolve1, 0)
-        self.assertEqual(self.arduino_interface.lat_outp1, 999)
+        self.assertEqual(self.arduino_interface.lat_outp1, 777)
         self.assertEqual(self.arduino_interface.kick_outp2, 0)
         self.assertEqual(self.arduino_interface.stand_outp2, 0)
         self.assertEqual(self.arduino_interface.horiz_outp2, 0)
         self.assertEqual(self.arduino_interface.revolve2, 0)
-        self.assertEqual(self.arduino_interface.lat_outp2, 999)
+        self.assertEqual(self.arduino_interface.lat_outp2, 777)
 
 if __name__ == '__main__':
     unittest.main()
