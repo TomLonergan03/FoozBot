@@ -1,3 +1,5 @@
+#this file uses the three sensors to detect the scores
+
 import serial
 import time
 
@@ -38,6 +40,12 @@ class GoalSensorInterface:
         self.arduino_ser1.close()
         self.arduino_ser2.close()
         self.tfluna_ser.close()
+
+    def get_player_score(self, player_no):
+        if player_no == 1:
+            return self.player_1_score
+        if player_no ==2:
+            return self.player_2_score
 
     def detect_score(self):
         while True:
@@ -81,9 +89,10 @@ class GoalSensorInterface:
 
                 time.sleep(0.01)  # Small delay to avoid excessive CPU usage
 
-if __name__ == "__main__":
-    goal_sensor_interface = GoalSensorInterface()
-    try:
-        goal_sensor_interface.detect_scores()
-    except KeyboardInterrupt:
-        goal_sensor_interface.close_connections()
+#usage from other files:
+#if __name__ == "__main__":
+    #goal_sensor_interface = GoalSensorInterface()
+    #try:
+        #goal_sensor_interface.detect_scores()
+    #except KeyboardInterrupt:
+        #goal_sensor_interface.close_connections()
