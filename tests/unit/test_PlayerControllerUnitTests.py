@@ -73,7 +73,7 @@ class PlayerControllerTestCase(unittest.TestCase):
     def test_check_kicking_cooldown(self):
         self.player_controller.first_row_kicking = True
         self.player_controller.second_row_kicking = True
-        self.player_controller.last_kick_time = [time.time() - 1, time.time() - 1]
+        self.player_controller.last_kick_time = [1, 1]
 
         self.player_controller.check_kicking_cooldown(time.time())
         self.assertFalse(self.player_controller.first_row_kicking)
