@@ -8,6 +8,7 @@ import TrajectoryAdapter
 from Mocks import MockArduinoInterface
 import ArduinoInterface
 from TrajectoryAdapter import Location
+from dataclasses import dataclass
 
 # MOTOR INTERFACE
 """
@@ -130,7 +131,24 @@ while True:
     # Pause to allow plot updates
     plt.pause(0.001)
 
+    def startGame(playerType : PlayerController):
+        game : Game = Game(0, 0, playerType)
+        return game
+        
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
         break
+
+@dataclass
+class Game:
+    human_goals: int
+    foozbot_goals: int
+    foozbot_player: PlayerController
+
+    def scoreGoal(self, side : bool):
+        if side == 0:
+            self.human_goals += 1
+        else:
+            self.foozbot_goals += 1
+    

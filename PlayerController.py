@@ -21,15 +21,15 @@ class PlayerController:
         self.second_row_kicking = False
 
         # Describes how far away the players can hit the ball
-        self.KICKING_RANGE = 20
+        self.KICKING_RANGE = 28
         self.kicking_width = 8
 
         # Describes how long it takes the players to kick
-        self.kicking_cooldown = 1.5
+        self.kicking_cooldown = 1.25
         self.last_kick_time = [0, 0]
 
         # Command sending
-        self.cmd_send_cooldown = 0.2
+        self.cmd_send_cooldown = 0.3
         self.last_cmd_sent = 0
 
         # Tells us which players are horizontal (so they don't get in the way of the ball from behind)
@@ -55,17 +55,17 @@ class PlayerController:
         if player_intersections[1] is not None:
             self.last_known_player_intersections[1] = player_intersections[1]
 
-        # self.players_horizontal_or_vertical(ball_coords)
+        self.players_horizontal_or_vertical(ball_coords)
         # self.should_kick(ball_coords)
         # """
-        # if self.within_kicking_range(ball_coords, self.player_row_x[0]):
-          #   self.first_row_kick(time)
+        if self.within_kicking_range(ball_coords, self.player_row_x[0]):
+           self.first_row_kick(time)
 
-        # if self.within_kicking_range(ball_coords, self.player_row_x[1]):
-          #   self.second_row_kick(time)
+        if self.within_kicking_range(ball_coords, self.player_row_x[1]):
+           self.second_row_kick(time)
         # """
         self.move_players(player_intersections, ball_coords)
-        # self.check_kicking_cooldown(time)
+        self.check_kicking_cooldown(time)
 
         if time - self.cmd_send_cooldown > self.last_cmd_sent:
             self.arduino_interface.send_command()
@@ -101,8 +101,16 @@ class PlayerController:
         max_player_coord = self.coords_range[1] / 3
 
         if intersect_pts[0] is None:
-            pass
             # self.arduino_interface.move_to(1, 55)
+            player_in_row = self.which_players_zone(ball_coords[1])
+            if player_in_row is not None:
+                lateral_percentage = (ball_coords[1] - player_in_row * max_player_coord - self.start_coords[1]) / max_player_coord
+                if lateral_percentage < 0:
+                    lateral_percentage = 0
+                elif lateral_percentage > 1:
+                    lateral_percentage = 1
+                self.arduino_interface.move_to(1, lateral_percentage * 110)
+                # print("Move row 1 to " + str(lateral_percentage * 110))
         else:
             player_in_row = self.which_players_zone(intersect_pts[0])
             if player_in_row is not None:
@@ -124,7 +132,7 @@ class PlayerController:
                 elif lateral_percentage > 1:
                     lateral_percentage = 1
                 self.arduino_interface.move_to(2, lateral_percentage * 110)
-                print("Move row 2 to " + str(lateral_percentage * 110))
+                # print("Move row 2 to " + str(lateral_percentage * 110))
         else:
             player_in_row = self.which_players_zone(intersect_pts[1])
             if player_in_row is not None:
@@ -134,7 +142,7 @@ class PlayerController:
                 elif lateral_percentage > 1:
                     lateral_percentage = 1
                 self.arduino_interface.move_to(2, lateral_percentage * 110)
-                print("Move row 2 to " + str(lateral_percentage * 110))
+                # print("Move row 2 to " + str(lateral_percentage * 110))
 
     """
     def should_kick(self, ball_coords):
@@ -178,12 +186,12 @@ class PlayerController:
         if ball_x_pos > self.player_row_x[1]:
             if not self.second_row_horizontal:
                 self.arduino_interface.go_horizontal(2)
-                print("Row 2 go Horizontal")
+                # print("Row 2 go Horizontal")
                 self.second_row_horizontal = True
         else:
             if self.second_row_horizontal:
                 self.arduino_interface.go_vertical(2)
-                print("Row 2 go Vertical")
+                # rint("Row 2 go Vertical")
                 self.second_row_horizontal = False
 
     # Returns: (boolean, boolean) the bools represent if the ball is behind the first players and second players
@@ -213,7 +221,7 @@ class PlayerController:
             print("Row 2 kick")
 
     def within_kicking_range(self, ball_coords, players_x):
-        if - self.KICKING_RANGE < (players_x - ball_coords[0]) < self.KICKING_RANGE:
+        if - self.KICKING_RANGE / 4 < (players_x - ball_coords[0]) < self.KICKING_RANGE:
             return True
         else:
             return False

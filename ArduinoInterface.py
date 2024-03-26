@@ -4,11 +4,11 @@ import serial
 class ArduinoInterface:
     def __init__(self):
         # Arduino is always on this port
-        self.player_1_port = '/dev/ttyACM0'
+        self.player_1_port = 'COM6'
         self.player_2_port =  'COM5' # '/dev/ttyACM0'
         self.baud_rate = 9600
 
-        self.player1 = serial.Serial(self.player_1_port, self.baud_rate)
+        # self.player1 = serial.Serial(self.player_1_port, self.baud_rate)
         self.player2 = serial.Serial(self.player_2_port, self.baud_rate)
         # self.ser = serial.Serial(self.serial_port, self.baud_rate)
 
@@ -25,8 +25,8 @@ class ArduinoInterface:
         self.lat_outp2 = 999     # 0 - 110 - lateral movement, 777 - don't move, 999 - lateral reset
 
         # Experiment with these to reduce latency?
-        self.player1.timeout = 1
-        self.player1.write_timeout = 1
+        # self.player1.timeout = 1
+        # self.player1.write_timeout = 1
         self.player2.timeout = 1
         self.player2.write_timeout = 1
 
@@ -37,8 +37,8 @@ class ArduinoInterface:
         outp1 += str(self.revolve1)
         outp1 += str(self.lat_outp1)
         outp1 += '\n'
-        print("Sending to p1: " + outp1)
-        self.player1.write(outp1.encode('utf-8'))
+        # print("Sending to p1: " + outp1)
+        # self.player1.write(outp1.encode('utf-8'))
 
         outp2 = str(self.kick_outp2)
         outp2 += str(self.stand_outp2)
@@ -60,7 +60,6 @@ class ArduinoInterface:
         self.horiz_outp1 = 0
         self.revolve1 = 0
         self.lat_outp1 = 777
-
         self.kick_outp2 = 0
         self.stand_outp2 = 0
         self.horiz_outp2 = 0
@@ -70,8 +69,10 @@ class ArduinoInterface:
     def go_vertical(self, player):
         if player == 2:
             self.stand_outp2 = 1
+            print("Go Vertical 2")
         elif player == 1:
             self.stand_outp1 = 1
+            print("Go Vertical 1")
 
     def go_horizontal(self, player):
         if player == 2:
@@ -101,8 +102,9 @@ class ArduinoInterface:
             return 55
 
     def close(self):
-        self.player1.close()
+        # self.player1.close()
         self.player2.close()
+        pass
 
     def read(self):
         try:
@@ -118,7 +120,7 @@ class ArduinoInterface:
             # Close the serial port when KeyboardInterrupt (Ctrl+C) is detected
             self.player2.close()
 
-
+"""
 if __name__ == '__main__':
     arduino = ArduinoInterface()
     arduino.send_command()
@@ -144,3 +146,4 @@ if __name__ == '__main__':
 
 
  #   arduino.read()
+"""
