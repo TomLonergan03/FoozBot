@@ -19,11 +19,10 @@ class ArduinoInterface:
         self.lat_outp2 = 999     # 0 - 110 - lateral movement, 777 - don't move, 999 - lateral reset
 
     def send_command(self):
-        player_1_command_string = self.get_player_command_string(1)
+        player_1_command_string, player_2_command_string = self.get_player_command_string()
         print("Sending to p1: " + player_1_command_string)
         self.player1.write(player_1_command_string.encode('utf-8'))
 
-        player_2_command_string = self.get_player_command_string(2)
         print("Sending to p2: " + player_2_command_string)
         self.player2.write(player_2_command_string.encode('utf-8'))
 
@@ -32,23 +31,21 @@ class ArduinoInterface:
         print("Reading from p2: " + line)
         self.reset_command()
 
-    def get_player_command_string(self, player_no):
-        if player_no == 1:
-            outp1 = str(self.kick_outp1)
-            outp1 += str(self.stand_outp1)
-            outp1 += str(self.horiz_outp1)
-            outp1 += str(self.revolve1)
-            outp1 += str(self.lat_outp1)
-            outp1 += '\n'
-            return outp1
-        if player_no == 2:
-            outp2 = str(self.kick_outp2)
-            outp2 += str(self.stand_outp2)
-            outp2 += str(self.horiz_outp2)
-            outp2 += str(self.revolve2)
-            outp2 += str(self.lat_outp2)
-            outp2 += '\n'
-            return outp2
+    def get_player_command_string(self):
+        outp1 = str(self.kick_outp1)
+        outp1 += str(self.stand_outp1)
+        outp1 += str(self.horiz_outp1)
+        outp1 += str(self.revolve1)
+        outp1 += str(self.lat_outp1)
+        outp1 += '\n'
+
+        outp2 = str(self.kick_outp2)
+        outp2 += str(self.stand_outp2)
+        outp2 += str(self.horiz_outp2)
+        outp2 += str(self.revolve2)
+        outp2 += str(self.lat_outp2)
+        outp2 += '\n'
+        return outp1, outp2
 
 
     def reset_command(self):
