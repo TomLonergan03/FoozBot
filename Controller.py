@@ -13,8 +13,9 @@ from TrajectoryAdapter import Location
 from dataclasses import dataclass
 
 # MOTOR INTERFACE
-player_1_serial = serial.Serial(player_1_port='/dev/ttyACM0', baudrate=9600, timeout=1,write_timeout=1)
-player_2_serial = serial.Serial(player_2_port='COM5', baudrate=9600,timeout=1,write_timeout=1)
+player_1_serial = serial.Serial(port='COM5', baudrate=9600, timeout=1,write_timeout=1) 
+player_2_serial = serial.Serial(port='COM3', baudrate=9600,timeout=1,write_timeout=1)      # /dev/ttyACM0 on Linux
+# player_1_serial = serial.Serial()
 arduino_interface = ArduinoInterface.ArduinoInterface(player_1_serial,player_2_serial) # MockArduinoInterface.MockArduinoInterface()
 
 

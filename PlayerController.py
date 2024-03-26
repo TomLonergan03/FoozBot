@@ -29,7 +29,7 @@ class PlayerController:
         self.last_kick_time = [0, 0]
 
         # Command sending
-        self.cmd_send_cooldown = 0.3
+        self.cmd_send_cooldown = 0.2
         self.last_cmd_sent = 0
 
         # Tells us which players are horizontal (so they don't get in the way of the ball from behind)
@@ -221,7 +221,7 @@ class PlayerController:
             print("Row 2 kick")
 
     def within_kicking_range(self, ball_coords, players_x):
-        if - self.KICKING_RANGE / 4 < (players_x - ball_coords[0]) < self.KICKING_RANGE:
+        if - self.KICKING_RANGE / 2 < (players_x - ball_coords[0]) < self.KICKING_RANGE:
             return True
         else:
             return False
