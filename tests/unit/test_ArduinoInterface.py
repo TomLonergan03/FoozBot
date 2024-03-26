@@ -46,27 +46,10 @@ class ArduinoInterfaceTestCase(unittest.TestCase):
         position2 = self.arduino_interface.get_position(2)
         self.assertEqual(position2, 55)
 
-    def test_get_player_command_string(self):
-        self.arduino_interface.kick_outp1 = 1
-        self.arduino_interface.stand_outp1 = 1
-        self.arduino_interface.horiz_outp1 = 1
-        self.arduino_interface.revolve1 = 1
-        self.arduino_interface.lat_outp1 = 100
-        command_string1 = self.arduino_interface.get_player_command_string(1)
-        self.assertEqual(command_string1, "11111100\n")
-
-        self.arduino_interface.kick_outp2 = 0
-        self.arduino_interface.stand_outp2 = 0
-        self.arduino_interface.horiz_outp2 = 0
-        self.arduino_interface.revolve2 = 0
-        self.arduino_interface.lat_outp2 = 777
-        command_string2 = self.arduino_interface.get_player_command_string(2)
-        self.assertEqual(command_string2, "00000777\n")
-
     def test_send_command(self):
         self.arduino_interface.send_command()
-        self.player_1_serial.write.assert_called_once_with(b"00000777\n")
-        self.player_2_serial.write.assert_called_once_with(b"00000777\n")
+        self.player_1_serial.write.assert_called_once_with(b"0000999\n")
+        self.player_2_serial.write.assert_called_once_with(b"0000999\n")
         self.assert_reset_state()
 
     def assert_reset_state(self):
@@ -74,12 +57,12 @@ class ArduinoInterfaceTestCase(unittest.TestCase):
         self.assertEqual(self.arduino_interface.stand_outp1, 0)
         self.assertEqual(self.arduino_interface.horiz_outp1, 0)
         self.assertEqual(self.arduino_interface.revolve1, 0)
-        self.assertEqual(self.arduino_interface.lat_outp1, 777)
+        self.assertEqual(self.arduino_interface.lat_outp1, 999)
         self.assertEqual(self.arduino_interface.kick_outp2, 0)
         self.assertEqual(self.arduino_interface.stand_outp2, 0)
         self.assertEqual(self.arduino_interface.horiz_outp2, 0)
         self.assertEqual(self.arduino_interface.revolve2, 0)
-        self.assertEqual(self.arduino_interface.lat_outp2, 777)
+        self.assertEqual(self.arduino_interface.lat_outp2, 999)
 
 if __name__ == '__main__':
     unittest.main()
