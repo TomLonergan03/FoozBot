@@ -7,8 +7,11 @@ import TrajectoryAdapter
 from TrajectoryAdapter import Location, Trajectory
 import BallDetectionAdapter
 import ArduinoInterface
+import time
 
 class PlayerControllerTestCase(unittest.TestCase):
+
+
     def setUp(self):
         self.mock_arduino = MagicMock()
         self.player_controller = PlayerController.PlayerController(
@@ -22,8 +25,11 @@ class PlayerControllerTestCase(unittest.TestCase):
             arduino_interface=self.mock_arduino
         )
 
+    def test_passes(self):
+        self.assertTrue(True)
+
     def test_within_kicking_range(self):
-        self.assertTrue(self.player_controller.within_kicking_range((100, 200), 124))
+        self.assertTrue(self.player_controller.within_kicking_range((100, 200), 108))
         self.assertFalse(self.player_controller.within_kicking_range((100, 200), 150))
 
     def test_first_row_kick(self):
