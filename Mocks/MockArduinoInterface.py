@@ -24,7 +24,7 @@
 
 #     def close(self):
 #         return None
-
+import serial
 class MockArduinoInterface:
     def __init__(self):
         self.kick_outp1 = 0
