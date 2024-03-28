@@ -65,7 +65,7 @@ class ArduinoInterface:
         if player == 2:
             self.stand_or_horiz2 = 1
         elif player == 1:
-            self.stand_or_horiz1 = 2
+            self.stand_or_horiz1 = 1
 
     def kick(self, player):
         if player == 2:

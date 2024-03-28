@@ -33,8 +33,8 @@ class PlayerController:
         self.last_cmd_sent = 0
 
         # Tells us which players are horizontal (so they don't get in the way of the ball from behind)
-        self.first_row_horizontal = True
-        self.second_row_horizontal = True
+        self.first_row_horizontal = None
+        self.second_row_horizontal = None
 
         # Maximum coordinates of the field
         self.start_coords = start_coords
@@ -173,23 +173,23 @@ class PlayerController:
         ball_x_pos = ball_position[0]
 
         if ball_x_pos > self.player_row_x[0]:
-            if not self.first_row_horizontal:
+            if not self.first_row_horizontal or self.first_row_horizontal == None:
                 self.arduino_interface.go_horizontal(1)
                 # print("Row 1 go Horizontal")
                 self.first_row_horizontal = True
         else:
-            if self.first_row_horizontal:
+            if self.first_row_horizontal or self.first_row_horizontal == None:
                 self.arduino_interface.go_vertical(1)
                 # print("Row 1 go Vertical")
                 self.first_row_horizontal = False
 
         if ball_x_pos > self.player_row_x[1]:
-            if not self.second_row_horizontal:
+            if not self.second_row_horizontal or self.second_row_horizontal == None:
                 self.arduino_interface.go_horizontal(2)
                 # print("Row 2 go Horizontal")
                 self.second_row_horizontal = True
         else:
-            if self.second_row_horizontal:
+            if self.second_row_horizontal or self.second_row_horizontal == None:
                 self.arduino_interface.go_vertical(2)
                 # rint("Row 2 go Vertical")
                 self.second_row_horizontal = False
