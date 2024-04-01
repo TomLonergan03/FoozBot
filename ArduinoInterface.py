@@ -29,6 +29,16 @@ class ArduinoInterface:
         print("Reading from p2: " + line)
         self.reset_command()
 
+    def pon(self):
+        temp = "pon"
+        self.player1.write(temp.encode('utf-8'))
+        self.player2.write(temp.encode('utf-8'))
+    
+    def poff(self):
+        temp = "poff"
+        self.player1.write(temp.encode('utf-8'))
+        self.player2.write(temp.encode('utf-8'))
+
     def get_player_command_string(self):
         outp1 = str(self.kick_outp1)
         outp1 += str(self.stand_or_horiz1)
