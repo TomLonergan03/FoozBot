@@ -78,7 +78,7 @@ while True:
     else:
         # Read data from TF-Luna Mini LiDAR
         bytes_serial = tfluna_ser.read(9)  # Read 9 bytes at once
-        if len(bytes_serial) == 9 and bytes_serial[0] == 0x59 and bytes_serial[1] ==>
+        if len(bytes_serial) == 9 and bytes_serial[0] == 0x59 and bytes_serial[1] == 0x59:
             distance = (bytes_serial[2] + bytes_serial[3] * 256)
             if distance < threshold:
                 game_start = True
