@@ -10,7 +10,9 @@ import BallDetectionAdapter
 import PlayerController
 import TrajectoryAdapter
 from TrajectoryAdapter import Location
+from GoalSensorInterface import GoalSensorInterface
 from dataclasses import dataclass
+import threading
 
 # MOTOR INTERFACE
 player_1_serial = serial.Serial(port='COM5', baudrate=9600, timeout=1,write_timeout=1) 
@@ -41,64 +43,15 @@ trajectory_finder = TrajectoryAdapter.TrajectoryAdapter(FIRST_PLAYER_ROW, SECOND
 player_controller = PlayerController.PlayerController(ball_vision.get_ball_position(), FIRST_PLAYER_ROW, player_start[0],
                                                       SECOND_PLAYER_ROW, player_start[1], top_left, bottom_right, arduino_interface)
 
+# GOAL SENSOR INTERFACE
+goal_sensor_interface = GoalSensorInterface()
+goal_detection_thread = threading.Thread(target=goal_sensor_interface.detect_score)
+goal_detection_thread.daemon = True
+goal_detection_thread.start()
 
 start_time = time.time()    # Can be exchanged for the vision controlled frame number 
 DISPLAY = True
 
-# Initialize variables for logging and plotting
-frame_times = []
-frame_numbers = []
-start_time = time.time()
-
-predicted_trajectories = []
-actual_trajectories = []
-"""
-# Create a figure and axis for the plot
-fig, ax = plt.subplots()
-ax.set_xlabel('Frame Number')
-ax.set_ylabel('Frame Time (ms)')
-ax.set_title('Real-time Performance Graph')
-
-fig_trajectory, ax_trajectory = plt.subplots()
-ax_trajectory.set_xlabel('X')
-ax_trajectory.set_ylabel('Y')
-ax_trajectory.set_title('Trajectory Prediction Accuracy')
-
-def update_plot():
-    ax.clear()
-    ax.plot(frame_numbers, frame_times)
-    ax.set_xlabel('Frame Number')
-    ax.set_ylabel('Frame Time (ms)')
-    ax.set_title('Real-time Performance Graph')
-    fig.canvas.draw()
-    
-def update_trajectory_plot():
-    ax_trajectory.clear()
-    for predicted_path, actual_path in zip(predicted_trajectories, actual_trajectories):
-        predicted_x = [loc.x for loc in predicted_path.locations]
-        predicted_y = [loc.y for loc in predicted_path.locations]
-        actual_x = [loc[0] for loc in actual_path]
-        actual_y = [loc[1] for loc in actual_path]
-        ax_trajectory.plot(predicted_x, predicted_y, 'b-', label='Predicted')
-        ax_trajectory.plot(actual_x, actual_y, 'r--', label='Actual')
-    ax_trajectory.set_xlabel('X')
-    ax_trajectory.set_ylabel('Y')
-    ax_trajectory.set_title('Trajectory Prediction Accuracy')
-    ax_trajectory.legend()
-    fig_trajectory.canvas.draw()
-
-# Start the plot update timer
-plot_timer = fig.canvas.new_timer(interval=1000)  # Update every 1 second
-plot_timer.add_callback(update_plot)
-plot_timer.start()
-
-trajectory_plot_timer = fig_trajectory.canvas.new_timer(interval=5000)  # Update every 5 seconds
-trajectory_plot_timer.add_callback(update_trajectory_plot)
-trajectory_plot_timer.start()
-
-plt.ion()  # Enable interactive mode
-plt.show(block=False)  # Show the plot window
-"""
 while True:
     # Vision
     ball_position = ball_vision.get_ball_position()
@@ -123,19 +76,8 @@ while True:
         player_controller.draw_text(image)
         cv2.imshow("System Visualisation", image)
         
-    # Store predicted and actual trajectories
-    predicted_trajectories.append(trajectory_finder.current_predicted_path)
-    actual_trajectories.append(ball_vision.get_ball_position())
-    # Log the frame time and frame number
-    frame_time = time.time() - start_time
-    frame_times.append(frame_time)
-    frame_numbers.append(ball_vision.frame_no)
-
-    # Pause to allow plot updates
-    plt.pause(0.001)
-
     def startGame(playerType : PlayerController):
-        game : Game = Game(0, 0, playerType)
+        game: Game = Game(0, 0, playerType, goal_sensor_interface)
         return game
         
 
@@ -148,10 +90,14 @@ class Game:
     human_goals: int
     foozbot_goals: int
     foozbot_player: PlayerController
+    goal_sensor_interface: GoalSensorInterface
 
     def scoreGoal(self, side : bool):
         if side == 0:
-            self.human_goals += 1
+            self.human_goals = self.goal_sensor_interface.get_player_score(1)
         else:
-            self.foozbot_goals += 1
+            self.foosbot_goals = self.goal_sensor_interface.get_player_score(2)
+
+# Close the sensor connections when the program exits
+goal_sensor_interface.close_sensors()
     
