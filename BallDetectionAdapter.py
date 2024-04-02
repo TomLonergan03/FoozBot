@@ -26,6 +26,7 @@ class BallEdgeDetection():
 
         # if a video path was not supplied, grab the reference to the webcam
         self.vs = VideoStream(src=src, resolution=(360,240)).start()
+
         self.frame = self.vs.read()
         self.frame_no = 0
         # self.frame_num = 0
@@ -149,3 +150,6 @@ class BallEdgeDetection():
         #    return
 
         return frame
+
+    def close(self):
+        self.vs.release()
