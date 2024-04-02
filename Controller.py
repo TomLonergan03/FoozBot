@@ -1,20 +1,16 @@
+import threading
 import time
 
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
-import serial
 
-import ArduinoInterface
 import BallDetectionAdapter
 import PlayerController
 import TrajectoryAdapter
 from AppInterface import AppInterface
+from Integrated.GoalSensorInterface import GoalSensorInterface
 from Mocks.MockArduinoInterface import MockArduinoInterface
 from TrajectoryAdapter import Location
-from GoalSensorInterface import GoalSensorInterface
-from dataclasses import dataclass
-import threading
 
 
 class Controller:
@@ -50,10 +46,10 @@ class Controller:
                                                               SECOND_PLAYER_ROW, player_start[1], top_left, bottom_right, arduino_interface)
 
         # GOAL SENSOR INTERFACE
-        #goal_sensor_interface = GoalSensorInterface()
-        #goal_detection_thread = threading.Thread(target=goal_sensor_interface.detect_score)
-        #goal_detection_thread.daemon = True
-        #goal_detection_thread.start()
+        goal_sensor_interface = GoalSensorInterface()
+        goal_detection_thread = threading.Thread(target=goal_sensor_interface.detect_score)
+        goal_detection_thread.daemon = True
+        goal_detection_thread.start()
 
         # APP INTERFACE
         app_interface = AppInterface("FoozbotMobileApp-master/score.json")
@@ -92,10 +88,10 @@ class Controller:
          #       return game
 
 
-         #   key = cv2.waitKey(1) & 0xFF
-          #  if key == ord("q"):
-           #     app_interface.end_game()
-            #    break
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
+                app_interface.end_game()
+                break
 
         print("Escapes loop")
         app_interface.end_game()
@@ -104,7 +100,6 @@ class Controller:
         cv2.destroyAllWindows()
         time.sleep(2)
 
-        """
         @dataclass
         class Game:
             human_goals: int
@@ -121,5 +116,4 @@ class Controller:
                     # self.foosbot_goals = self.goal_sensor_interface.get_player_score(2)
         
         # Close the sensor connections when the program exits
-        #goal_sensor_interface.close_sensors()
-            """
+goal_sensor_interface.close_sensors()
