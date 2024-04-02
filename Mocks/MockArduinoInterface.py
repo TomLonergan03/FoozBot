@@ -4,6 +4,9 @@ class MockArduinoInterface():
     def send_command(self, command):
         return None
 
+    def send_command(self):
+        return None
+
     def go_vertical(self, player):
         return None
 

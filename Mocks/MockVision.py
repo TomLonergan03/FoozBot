@@ -7,7 +7,7 @@ import numpy as np
 
 
 class MockVision:
-    def __init__(self):
+    def __init__(self,port):
         self.counter = 0
         self.travel_speed = 0.005
 

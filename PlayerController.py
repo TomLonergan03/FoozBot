@@ -45,7 +45,6 @@ class PlayerController:
         self.arduino_interface = arduino_interface
         # assert isinstance(self.arduino_interface, ArduinoInterface)
         self.last_known_player_intersections = [0.0, 0.0]
-        self.arduino_interface.send_command()
 
     def update_ball_position(self, ball_coords, player_intersections: list[float], time):
         self.ball_coords = ball_coords

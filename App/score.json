@@ -1,0 +1,6 @@
+{"player_1_score" : 0,
+                "player_2_score" : 0,
+                "game_mode" : 1,
+                "difficulty" : "easy",
+                "ongoing" : true,
+                "ack": false}
