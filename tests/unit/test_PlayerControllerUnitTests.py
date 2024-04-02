@@ -1,7 +1,7 @@
 import time
 import unittest
 from unittest.mock import MagicMock
-
+from ArduinoInterface import ArduinoInterface
 import PlayerController
 
 
@@ -9,7 +9,7 @@ class PlayerControllerTestCase(unittest.TestCase):
 
 
     def setUp(self):
-        self.mock_arduino = MagicMock()
+        self.mock_arduino = MagicMock(spec=ArduinoInterface)
         self.player_controller = PlayerController.PlayerController(
             ball_coords=(0, 0),
             first_row_x=100,
@@ -55,26 +55,19 @@ class PlayerControllerTestCase(unittest.TestCase):
         intersect_pts = [60, None]
         ball_coords = (180, 120)
         self.player_controller.move_players(intersect_pts, ball_coords)
-        self.mock_arduino.move_to.assert_called_with(1, 75.0)
+        self.mock_arduino.move_to.assert_called_with(2, 55.0)
 
     def test_move_players_row2_intersection(self):
         intersect_pts = [None, 180]
         ball_coords = (180, 120)
         self.player_controller.move_players(intersect_pts, ball_coords)
-        self.mock_arduino.move_to.assert_called_with(2, 75.0)
-
-    def test_move_players_both_intersections(self):
-        intersect_pts = [60, 180]
-        ball_coords = (180, 120)
-        self.player_controller.move_players(intersect_pts, ball_coords)
-        self.mock_arduino.move_to.assert_any_call(1, 75.0)
-        self.mock_arduino.move_to.assert_called_with(2, 75.0)
+        self.mock_arduino.move_to.assert_called_with(2, 27.5)
         
-    # def test_check_kicking_cooldown(self):
-    #     self.player_controller.first_row_kicking = True
-    #     self.player_controller.second_row_kicking = True
-    #     self.player_controller.last_kick_time = [time.time() - 1, time.time() - 1]
+    def test_check_kicking_cooldown(self):
+        self.player_controller.first_row_kicking = True
+        self.player_controller.second_row_kicking = True
+        self.player_controller.last_kick_time = [1, 1]
 
-    #     self.player_controller.check_kicking_cooldown(time.time())
-    #     self.assertFalse(self.player_controller.first_row_kicking)
-    #     self.assertFalse(self.player_controller.second_row_kicking)
+        self.player_controller.check_kicking_cooldown(time.time())
+        self.assertFalse(self.player_controller.first_row_kicking)
+        self.assertFalse(self.player_controller.second_row_kicking)

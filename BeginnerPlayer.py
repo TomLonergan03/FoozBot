@@ -1,28 +1,26 @@
 import time
+import PCInterface
 from ArduinoInterface import ArduinoInterface
 
 import cv2
 
 
-class PlayerController:
+class BeginnerPlayer(PCInterface):
 
     def __init__(self, ball_coords: tuple[float, float], first_row_x, first_row_y, second_row_x, second_row_y,
                  start_coords: tuple[float, float], max_coords: tuple[float, float], arduino_interface : ArduinoInterface):
         self.ball_coords = ball_coords
 
-        # These fields store the positions of the rows of players on the board
-        # self.first_row_x = first_row_x
-        # self.second_row_x = second_row_x        
+        # These fields store the positions of the rows of players on the board    
         self.player_row_x = [first_row_x, second_row_x]
-        self.player_row_bottom = [first_row_y, second_row_y]
+        self.player_row_bottom = [first_row_y, second_row_y]        # For drawing purposes
         
         # Fields to tell us if the players are already in the process of kicking
         self.first_row_kicking = False
         self.second_row_kicking = False
 
         # Describes how far away the players can hit the ball
-        self.KICKING_RANGE = 28
-        self.kicking_width = 8
+        self.KICKING_RANGE = 30
 
         # Describes how long it takes the players to kick
         self.kicking_cooldown = 1.25
@@ -56,14 +54,13 @@ class PlayerController:
             self.last_known_player_intersections[1] = player_intersections[1]
 
         self.players_horizontal_or_vertical(ball_coords)
-        # self.should_kick(ball_coords)
-        # """
+
         if self.within_kicking_range(ball_coords, self.player_row_x[0]):
            self.first_row_kick(time)
 
         if self.within_kicking_range(ball_coords, self.player_row_x[1]):
            self.second_row_kick(time)
-        # """
+
         self.move_players(player_intersections, ball_coords)
         self.check_kicking_cooldown(time)
 
@@ -80,13 +77,10 @@ class PlayerController:
             return 1
         if self.player_zone_coords(2)[0] < x_intercept < self.player_zone_coords(2)[1]:
             return 2
-        # """
-        # return 0
 
     def player_zone_coords(self, player_no):
         min_y = self.start_coords[1]
         h = self.coords_range[1]
-        max_y = self.max_coords[1]
 
         if player_no == 0:
             return (int(min_y), int(min_y + h / 3))
@@ -109,8 +103,6 @@ class PlayerController:
                     lateral_percentage = 0
                 elif lateral_percentage > 1:
                     lateral_percentage = 1
-                self.arduino_interface.move_to(1, lateral_percentage * 110)
-                # print("Move row 1 to " + str(lateral_percentage * 110))
         else:
             player_in_row = self.which_players_zone(intersect_pts[0])
             if player_in_row is not None:
@@ -119,55 +111,29 @@ class PlayerController:
                     lateral_percentage = 0
                 elif lateral_percentage > 1:
                     lateral_percentage = 1
-                self.arduino_interface.move_to(1, lateral_percentage * 110)
-                # print("Move row 1 to " + str(lateral_percentage * 110))
 
+        # print("Move row 1 to " + str(lateral_percentage * 110))
+        self.arduino_interface.move_to(1, lateral_percentage * 110)
         if intersect_pts[1] is None:
             player_in_row = self.which_players_zone(ball_coords[1])
             # self.arduino_interface.move_to(2, 55)
             if player_in_row is not None:
-                lateral_percentage = (ball_coords[1] - player_in_row * max_player_coord - self.start_coords[1]) / max_player_coord
-                if lateral_percentage < 0:
-                    lateral_percentage = 0
-                elif lateral_percentage > 1:
-                    lateral_percentage = 1
-                self.arduino_interface.move_to(2, lateral_percentage * 110)
-                # print("Move row 2 to " + str(lateral_percentage * 110))
+                lateral_percentage2 = (ball_coords[1] - player_in_row * max_player_coord - self.start_coords[1]) / max_player_coord
+                if lateral_percentage2 < 0:
+                    lateral_percentage2 = 0
+                elif lateral_percentage2 > 1:
+                    lateral_percentage2 = 1
         else:
             player_in_row = self.which_players_zone(intersect_pts[1])
             if player_in_row is not None:
-                lateral_percentage = (intersect_pts[1] - player_in_row * max_player_coord - self.start_coords[1]) / max_player_coord
-                if lateral_percentage < 0:
-                    lateral_percentage = 0
-                elif lateral_percentage > 1:
-                    lateral_percentage = 1
-                self.arduino_interface.move_to(2, lateral_percentage * 110)
-                # print("Move row 2 to " + str(lateral_percentage * 110))
-
-    """
-    def should_kick(self, ball_coords):
-        player_zone = self.which_players_zone(ball_coords[1])
-        if player_zone is not None:
-            normalised_ball = ball_coords[1] - (player_zone * (self.coords_range[1] / 3))
-
-            first_player = self.start_coords[1] + self.coords_range[1] * self.arduino_interface.get_position(1) / 110
-            normalised_first_player = first_player - (player_zone * (self.max_coords[1] / 3))
-
-            second_player = self.start_coords[1] + self.coords_range[1] * self.arduino_interface.get_position(2) / 110
-            normalised_second_player = second_player - (player_zone * (self.max_coords[1] / 3))
-
-            # if ball is in front of first players
-            if ball_coords[0] > self.player_row_x[0]:
-                if 0 <= (normalised_ball - normalised_first_player) < self.KICKING_RANGE:
-                    self.arduino_interface.kick(1)
-                    print("Row 1 kick")
-
-            # if ball is in front of second players
-            if ball_coords[0] > self.player_row_x[1]:
-                if 0 <= (normalised_ball - normalised_second_player) < self.KICKING_RANGE:
-                    self.arduino_interface.kick(2)
-                    print("Row 2 kick")
-    """
+                lateral_percentage2 = (intersect_pts[1] - player_in_row * max_player_coord - self.start_coords[1]) / max_player_coord
+                if lateral_percentage2 < 0:
+                    lateral_percentage2 = 0
+                elif lateral_percentage2 > 1:
+                    lateral_percentage2 = 1
+                
+        self.arduino_interface.move_to(2, lateral_percentage2 * 110)
+        # print("Move row 2 to " + str(lateral_percentage * 110))
 
     def players_horizontal_or_vertical(self, ball_position):
         ball_x_pos = ball_position[0]
@@ -193,18 +159,6 @@ class PlayerController:
                 self.arduino_interface.go_vertical(2)
                 # rint("Row 2 go Vertical")
                 self.second_row_horizontal = False
-
-    # Returns: (boolean, boolean) the bools represent if the ball is behind the first players and second players
-    # respectively.
-    def ball_behind_players(self):
-        return_val = [False, False]
-        if self.ball_coords[1] < self.player_row_x[0]:
-            return_val[0] = True
-
-        if self.ball_coords[1] < self.player_row_x[1]:
-            return_val[1] = True
-
-        return return_val
 
     def first_row_kick(self, time):
         if not self.first_row_kicking:
