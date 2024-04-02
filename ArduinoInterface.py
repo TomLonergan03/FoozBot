@@ -35,7 +35,7 @@ class ArduinoInterface:
         self.player2.write(temp.encode('utf-8'))
     
     def poff(self):
-        temp = "poff"
+        temp = "pof"
         self.player1.write(temp.encode('utf-8'))
         self.player2.write(temp.encode('utf-8'))
 
